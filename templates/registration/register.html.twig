@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('login') }}
+{% endblock %}
+
+{% block title %}Créer votre compte{% endblock %}
+
+{% block body_class 'text-center' %}
+
+{% block body %}
+    <div class="form-auth">
+        {{ form_start(registrationForm) }}
+        <img class="mb-4" src="{{ asset('favicon.ico') }}" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Créer votre compte</h1>
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.plainPassword) }}
+        <button class="btn btn-primary btn-block" type="submit">S'inscrire</button>
+        {{ form_end(registrationForm) }}
+        <hr>
+        <a class="text-primary btn-block" href="{{ path('app_login') }}">Se connecter à un compte existant</a>
+    </div>
+{% endblock %}

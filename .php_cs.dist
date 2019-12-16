@@ -1,0 +1,37 @@
+<?php
+
+//https://cs.symfony.com/
+
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__.'/src')
+    ->in(__DIR__.'/tests')
+    ->exclude('Migrations')
+;
+
+return PhpCsFixer\Config::create()
+    ->setRiskyAllowed(true)
+    ->setRules([
+        '@Symfony' => true,
+        '@DoctrineAnnotation' => true,
+        'phpdoc_summary' => false,
+        'no_unneeded_final_method' => false,
+        'no_superfluous_phpdoc_tags' => true,
+        "no_unused_imports" => true,
+        'concat_space' => ['spacing' => 'none'],
+        'phpdoc_to_comment' => false,
+        'native_constant_invocation' => true,
+        'native_function_invocation' => ['include' => ['@compiler_optimized']],
+        'PedroTroller/useless_code_after_return' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'ordered_imports' => ['sort_algorithm' => 'alpha'],
+        'yoda_style' => false,
+        'increment_style' => ['style' => 'post']
+    ])
+    ->setFinder($finder)
+    ->setRiskyAllowed(true)
+    ->setCacheFile(__DIR__ . '/.php_cs.cache')
+    ->registerCustomFixers([
+        new PedroTroller\CS\Fixer\CodingStyle\LineBreakBetweenStatementsFixer,
+        new PedroTroller\CS\Fixer\Comment\UselessCommentFixer,
+        new PedroTroller\CS\Fixer\DeadCode\UselessCodeAfterReturnFixer(),
+    ]);

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div id="root"
+         data-url="{{ path('api_entrypoint') }}"
+         data-user="{{ path('api_entrypoint') }}/users/{{ app.user.id }}"
+    ></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('calendar') }}
+{% endblock %}

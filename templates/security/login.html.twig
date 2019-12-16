@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('login') }}
+{% endblock %}
+{% block body_class 'text-center' %}
+
+{% block body %}
+    <div class="form-auth">
+        <form method="post">
+            <img class="mb-4" src="{{ asset('favicon.ico') }}" alt="" width="72" height="72">
+            <h1 class="h3 mb-3 font-weight-normal">Se connecter à Calendar</h1>
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+            <div class="form-group">
+                <label for="inputEmail" class="sr-only">Adresse e-mail</label>
+                <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control"
+                       placeholder="Adresse e-mail"
+                       required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="inputPassword" class="sr-only">Mot de passe</label>
+                <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe"
+                       required="">
+            </div>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"
+            >
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" name="_remember_me"> Se souvenir de moi
+                </label>
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Se connecter</button>
+        </form>
+        <hr>
+        <a class="text-primary btn-block" href="{{ path('app_register') }}">Créer un compte</a>
+    </div>
+{% endblock %}

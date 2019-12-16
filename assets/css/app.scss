@@ -1,0 +1,25 @@
+// you must include each plugins' css
+// paths prefixed with ~ signify node_modules
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
+@import '~@fullcalendar/timegrid/main.css';
+@import '~bootstrap';
+@import '~@sweetalert2/theme-bootstrap-4/bootstrap-4.scss';
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
+.fc-toolbar {
+  text-transform: capitalize;
+}
+
+.modal {
+  display: none;
+}
+
+.modal.is-open {
+  display: block;
+}
+
+.fc-event {
+  border: none;
+  cursor: pointer;
+}
