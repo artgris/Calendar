@@ -38,6 +38,7 @@
         "react-bootstrap": "^1.0.0-beta.16",
         "react-color": "^2.17.3",
         "react-dom": "^16.12.0",
+        "serialize-javascript": "^2.1.2",
         "sweetalert2": "^9.4.1",
         "sweetalert2-react-content": "^2.0.2"
     }
