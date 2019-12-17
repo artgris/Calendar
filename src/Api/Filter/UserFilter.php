@@ -56,7 +56,7 @@ final class UserFilter implements FilterInterface
 //            }
 //        }
         $user = $this->getUser();
-            $queryBuilder->andWhere('o.user = :user')
+        $queryBuilder->andWhere('o.user = :user')
                 ->setParameter('user', $user);
     }
 
@@ -93,7 +93,7 @@ final class UserFilter implements FilterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDescription(string $resourceClass): array
     {

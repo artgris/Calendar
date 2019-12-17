@@ -119,9 +119,9 @@ class EventRepository extends ServiceEntityRepository
             $hours = round(fmod($value, 8), 2);
             $hoursFormat = '';
             if ($hours) {
-                $hoursFormat = ' et '.$this->convertHoursToMinutes($hours);
+                $hoursFormat = $this->convertHoursToMinutes($hours, true);
             }
-            $valueFormat = (int)($value / 8).'J '.$hoursFormat;
+            $valueFormat = (int) ($value / 8).'J'.$hoursFormat;
         }
 
         return $valueFormat;
@@ -159,22 +159,27 @@ class EventRepository extends ServiceEntityRepository
         return $countDays.'J';
     }
 
-    private function convertHoursToMinutes($hours)
+    private function convertHoursToMinutes($hours, $and = false)
     {
+        $pre = '';
         $fraction = $hours - floor($hours);
 
         if ($fraction) {
-
             $min = round($fraction * 60);
             $hoursFormat = '';
+            $pre = ' et ';
             if ($hours) {
+                $pre = ', ';
                 $hoursFormat = floor($hours).'h et ';
             }
 
-            return $hoursFormat.$min.' min';
+            return $pre.$hoursFormat.$min.'min';
         }
 
-        return $hours.'h';
+        if ($and) {
+            $pre = ' et ';
+        }
 
+        return $pre.$hours.'h';
     }
 }
