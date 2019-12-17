@@ -165,7 +165,7 @@ class EventRepository extends ServiceEntityRepository
 
         if ($fraction) {
 
-            $min = (int)($fraction * 60);
+            $min = round($fraction * 60);
             $hoursFormat = '';
             if ($hours) {
                 $hoursFormat = floor($hours).'h et ';
