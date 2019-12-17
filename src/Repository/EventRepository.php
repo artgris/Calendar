@@ -163,26 +163,28 @@ class EventRepository extends ServiceEntityRepository
     private function convertHoursToMinutes($hours, $and = false)
     {
         $pre = '';
+        $andString = ' et ';
         $fraction = $hours - floor($hours);
+        $floor = floor($hours);
 
         if ($fraction) {
             $min = round($fraction * 60);
             $hoursFormat = '';
             if ($and) {
-                $pre = ' et ';
+                $pre = $andString;
             }
-            if ($hours) {
+            if ($floor) {
                 if ($and) {
                     $pre = ', ';
                 }
-                $hoursFormat = floor($hours).'h et ';
+                $hoursFormat = $floor.'h'.$andString;
             }
 
             return $pre.$hoursFormat.$min.'min';
         }
 
         if ($and) {
-            $pre = ' et ';
+            $pre = $andString;
         }
 
         return $pre.$hours.'h';
