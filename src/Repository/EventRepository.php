@@ -114,14 +114,14 @@ class EventRepository extends ServiceEntityRepository
             return '0J';
         }
         if ($value < 8) {
-            $valueFormat = $value.'h';
+            $valueFormat = round($value, 2).'h';
         } else {
             $hours = round(fmod($value, 8), 2);
             $hoursFormat = '';
             if ($hours) {
-                $hoursFormat = ' et '.$hours.'h';
+                $hoursFormat = ' et '.round($hours, 2).'h';
             }
-            $valueFormat = (int) ($value / 8).'J '.$hoursFormat;
+            $valueFormat = (int)($value / 8).'J '.$hoursFormat;
         }
 
         return $valueFormat;

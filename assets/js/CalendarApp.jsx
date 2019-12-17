@@ -103,6 +103,7 @@ export default class CalendarApp extends React.Component {
                             <div className="form-group">
                                 <input className="form-control mb-1" placeholder="Nom du Projet"
                                        value={this.state.value}
+                                       required
                                        onChange={this.handleProjectNameChange}
                                        type="text"/>
 
