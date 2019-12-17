@@ -110,6 +110,7 @@ class EventRepository extends ServiceEntityRepository
 
     private function formatDays($value)
     {
+        
         if ($value == 0) {
             return '0J';
         }
@@ -121,7 +122,7 @@ class EventRepository extends ServiceEntityRepository
             if ($hours) {
                 $hoursFormat = $this->convertHoursToMinutes($hours, true);
             }
-            $valueFormat = (int) ($value / 8).'J'.$hoursFormat;
+            $valueFormat = (int)($value / 8).'J'.$hoursFormat;
         }
 
         return $valueFormat;
@@ -167,9 +168,13 @@ class EventRepository extends ServiceEntityRepository
         if ($fraction) {
             $min = round($fraction * 60);
             $hoursFormat = '';
-            $pre = ' et ';
+            if ($and) {
+                $pre = ' et ';
+            }
             if ($hours) {
-                $pre = ', ';
+                if ($and) {
+                    $pre = ', ';
+                }
                 $hoursFormat = floor($hours).'h et ';
             }
 
