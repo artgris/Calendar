@@ -82,6 +82,9 @@ class EventRepository extends ServiceEntityRepository
                 if (!isset($stat[$eventTmp->getProject()->getTitle()])) {
                     $stat[$eventTmp->getProject()->getTitle()] = 0;
                 }
+                if ($hours> 8) {
+                    $hours = 8;
+                }
                 // en heures
                 $stat[$eventTmp->getProject()->getTitle()] += $eventTmp->getHours() ? $eventTmp->hoursByDay() : (8 - $hours) / $div;
             }
@@ -100,7 +103,6 @@ class EventRepository extends ServiceEntityRepository
             $valueFormat = $this->formatDays($value);
             $statArray[] = $key.': '.$valueFormat;
         }
-
         return [
             'total' => $this->formatDays($total),
             'totalCalcul' => $this->totalDaysByDate($date),
@@ -114,6 +116,7 @@ class EventRepository extends ServiceEntityRepository
         if ($value == 0) {
             return '0J';
         }
+        
         if ($value < 8) {
             $valueFormat = $this->convertHoursToMinutes($value);
         } else {
