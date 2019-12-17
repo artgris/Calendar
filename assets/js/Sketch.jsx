@@ -14,7 +14,8 @@ export default class Sketch extends React.Component {
     };
     colors = [
         '#3e2723', '#263238', '#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300EB', '#666666',
-        '#d7ccc8', '#cfd8dc', '#EB9694', '#FAD0C3', '#FEF3BD', '#C1E1C5', '#BEDADC', '#C4DEF6', '#BED3F3', '#D4C4FB', '#B3B3B3'
+        '#d7ccc8', '#cfd8dc', '#EB9694', '#FAD0C3', '#FEF3BD', '#C1E1C5', '#BEDADC', '#C4DEF6', '#BED3F3', '#D4C4FB', '#B3B3B3',
+        '#E2EAF0'
     ];
 
     handleClick = () => {
