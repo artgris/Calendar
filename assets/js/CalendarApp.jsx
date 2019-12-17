@@ -444,13 +444,9 @@ export default class CalendarApp extends React.Component {
             data: {
                 "color": e.hex,
             }
-        }).then((result) => {
+        }).then(() => {
+            this.updateProject();
             this.updateEvent();
-            this.setState(prevState => ({
-                events: prevState.events.map(
-                    el => el.id === parseInt(id) ? {...el, color: result.data.color} : el
-                )
-            }));
         });
     }
 
