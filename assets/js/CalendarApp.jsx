@@ -67,7 +67,7 @@ export default class CalendarApp extends React.Component {
                             <div
                                 onClick={this.projectClick}
                                 className="fc-event row m-2"
-                                style={{backgroundColor: event.color}}
+                                style={{backgroundColor: event.color, color: event.textColor}}
                                 title={event.title}
                                 data-color={event.color}
                                 data-id={event.id}

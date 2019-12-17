@@ -89,6 +89,12 @@ class Event
      */
     public $user;
 
+    /**
+     * @ApiProperty()
+     */
+    public $textColor;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -193,4 +199,11 @@ class Event
 
         return $this;
     }
+
+    public function getTextColor()
+    {
+        return $this->project->getTextColor();
+    }
+
+
 }

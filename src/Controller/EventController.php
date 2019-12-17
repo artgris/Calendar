@@ -21,9 +21,11 @@ class EventController extends AbstractController
         $response = $holidays->all();
 
         foreach ($events as $event) {
+            /** @var Event $event */
             $response[] = [
                 'id' => $event->getId(),
                 'color' => $event->getColor(),
+                'textColor' => $event->getTextColor(),
                 'title' => $event->getTitle(),
                 'hours' => $event->getHours(),
                 'projectName' => $event->getProjectName(),
