@@ -76,7 +76,7 @@ export default class Sketch extends React.Component {
                 </div>
                 {this.state.displayColorPicker ? <div style={styles.popover}>
                     <div style={styles.cover} onClick={this.handleClose}/>
-                    <SketchPicker color={this.state.color} presetColors={this.colors} onChange={this.handleChange.bind(this)}/>
+                    <SketchPicker width="230px" color={this.state.color} presetColors={this.colors} onChange={this.handleChange.bind(this)}/>
                 </div> : null}
 
             </div>
