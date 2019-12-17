@@ -10,7 +10,7 @@ import withReactContent from 'sweetalert2-react-content'
 import * as axios from "axios";
 import moment from "moment";
 import 'moment/locale/fr';
-import {GithubPicker} from 'react-color';
+import Sketch from "./Sketch";
 
 const Alert = withReactContent(Swal);
 
@@ -28,7 +28,7 @@ export function formatDate(date, removeADay) {
 export default class CalendarApp extends React.Component {
 
     calendarComponentRef = React.createRef();
-
+    sketchComponentRef = React.createRef();
     state = {
         calendarEvents: [],
         events: [],
@@ -39,7 +39,7 @@ export default class CalendarApp extends React.Component {
             totalCalcul: ''
         },
         errors: [],
-        background: '',
+        background: '#' + Math.floor(Math.random() * 16777215).toString(16),
         projectName: 'ff'
     };
 
@@ -101,22 +101,25 @@ export default class CalendarApp extends React.Component {
                                 </div>
                             ))}
                             <div className="form-group">
-                                <input className="form-control mb-1" placeholder="Nom du Projet"
-                                       value={this.state.value}
-                                       required
-                                       onChange={this.handleProjectNameChange}
-                                       type="text"/>
+                                <div className="row">
+                                    <Sketch
+                                        onChange={this.handlePickerChange.bind(this)}
+                                        color={this.state.background}
+                                        ref={this.sketchComponentRef}
+                                    />
+                                    <div className="col">
+                                        <input className="form-control mb-1" placeholder="Nom du Projet"
+                                               value={this.state.value}
+                                               required
+                                               onChange={this.handleProjectNameChange}
+                                               type="text"/>
+                                    </div>
+                                </div>
 
                                 <input className="form-control"
                                        value={this.state.background}
                                        type="hidden"/>
 
-                                <GithubPicker
-                                    onChange={this.handlePickerChange}
-                                    triangle='hide'
-                                    colors={["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#00bcd4", "#009688", "#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#795548", "#607d8b"]}
-                                    width='100%'
-                                />
                             </div>
                             <button type="submit" className="btn btn-sm btn-outline-primary">
                                 <i className="fas fa-plus-circle"/> Ajouter le Projet
@@ -190,6 +193,7 @@ export default class CalendarApp extends React.Component {
 
         this.updateProject();
         this.updateEvent();
+
     }
 
     // Fullcalendar Events
@@ -204,7 +208,6 @@ export default class CalendarApp extends React.Component {
         });
     };
 
-
     // au click sur le projet
     projectClick = (event) => {
         const project = event.currentTarget.dataset;
@@ -214,17 +217,18 @@ export default class CalendarApp extends React.Component {
             showCancelButton: true,
             html:
                 <>
-                    <input className="form-control mb-1"
-                           type="text"
-                           onChange={(e) => this.updateProjectName(e, project.id)}
-                           defaultValue={event.currentTarget.title}/>
-
-                    <GithubPicker
-                        onChange={(e) => this.updateProjectColor(e, project.id)}
-                        triangle='hide'
-                        colors={["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#00bcd4", "#009688", "#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#795548", "#607d8b"]}
-                        width='100%'
-                    />
+                    <div className="row mt-4">
+                        <Sketch
+                            onClose={(e) => this.updateProjectColor(e, project.id)}
+                            color={project.color}
+                        />
+                        <div className="col">
+                            <input className="form-control mb-1"
+                                   type="text"
+                                   onChange={(e) => this.updateProjectName(e, project.id)}
+                                   defaultValue={event.currentTarget.title}/>
+                        </div>
+                    </div>
                 </>
             ,
             confirmButtonColor: "#d33",
@@ -437,12 +441,12 @@ export default class CalendarApp extends React.Component {
         this.setState({value: event.target.value});
     }
 
-    updateProjectColor(e, id) {
+    updateProjectColor(color, id) {
         axios({
             url: this.props.url + '/projects/' + id,
             method: 'put',
             data: {
-                "color": e.hex,
+                "color": color,
             }
         }).then(() => {
             this.updateProject();
@@ -471,8 +475,8 @@ export default class CalendarApp extends React.Component {
     }
 
     // changement du code couleur dans le form Projet
-    handlePickerChange = (color) => {
-        this.setState({background: color.hex});
+    handlePickerChange = (value) => {
+        this.setState({background: value});
     };
 
     // masque les erreurs du form
@@ -505,9 +509,7 @@ export default class CalendarApp extends React.Component {
         });
     }
 
-
     updateEventHours(e, event) {
-
         axios({
             url: this.props.url + '/events/' + event.id,
             method: 'put',
