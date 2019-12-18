@@ -60,11 +60,12 @@ export default class CalendarApp extends React.Component {
                 <div className="col-md-3">
                     {hasProject &&
 
-                        <div className="row p-2">
-                            <div className="col">
-                                <strong> Projets</strong>
-                            </div>
-                            <div className="col text-right">
+                    <div className="row p-2">
+                        <div className="col">
+                            <strong> Projets</strong>
+                        </div>
+                        <div className="col text-right">
+                            <div className="custom-control custom-checkbox">
                                 <input type="checkbox"
                                        defaultChecked={this.state.displayArchived}
                                        onChange={(e) => this.displayArchive(e)}
@@ -75,8 +76,8 @@ export default class CalendarApp extends React.Component {
                                     Archivé
                                 </label>
                             </div>
-
                         </div>
+                    </div>
                     }
 
                     <div id="external-events" className="pb-2">
@@ -92,7 +93,7 @@ export default class CalendarApp extends React.Component {
                                 key={event.id}
                             >
                                 <div className="col">
-                                    {event.title} {event.archived ? '(archivé)': ''}
+                                    {event.title} {event.archived ? '(archivé)' : ''}
                                 </div>
                             </div>
                         ))}
@@ -570,7 +571,7 @@ export default class CalendarApp extends React.Component {
 
     displayArchive(e) {
         this.setState({
-            displayArchived:e.target.checked
+            displayArchived: e.target.checked
         });
     }
 }
