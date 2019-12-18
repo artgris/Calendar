@@ -42,8 +42,8 @@ export default class Sketch extends React.Component {
         const styles = reactCSS({
             'default': {
                 color: {
-                    width: '36px',
-                    height: '25px',
+                    width: '57px',
+                    height: '28px',
                     borderRadius: '2px',
                     background: `${this.state.color}`,
                 },
