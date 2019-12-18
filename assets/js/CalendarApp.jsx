@@ -102,7 +102,7 @@ export default class CalendarApp extends React.Component {
                     <hr/>
                     }
 
-                    <div className="row pb-3">
+                    <div className="row p-2">
                         <div className="col-12">
                             <p className="text-center">
                                 <strong>Ajouter un Projet</strong>
