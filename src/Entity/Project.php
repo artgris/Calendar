@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Api\Filter\UserFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 /**
  * @ApiResource(
  *     attributes={"security": "is_granted('ROLE_USER')", "filters": {UserFilter::class}},
@@ -65,6 +66,12 @@ class Project
      * @ApiProperty
      */
     public $textColor;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $archived = false;
 
     /**
      * Project constructor.
@@ -143,4 +150,15 @@ class Project
 
         return ($yiq >= 128) ? '#000' : '#fff';
     }
+
+    public function isArchived(): ?bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(?bool $archived): void
+    {
+        $this->archived = $archived;
+    }
+
 }

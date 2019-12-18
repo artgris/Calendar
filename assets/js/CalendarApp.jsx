@@ -30,6 +30,7 @@ export default class CalendarApp extends React.Component {
     calendarComponentRef = React.createRef();
     sketchComponentRef = React.createRef();
     state = {
+        displayArchived: false,
         calendarEvents: [],
         events: [],
         value: '',
@@ -48,6 +49,7 @@ export default class CalendarApp extends React.Component {
         this.handleProjectNameChange = this.handleProjectNameChange.bind(this);
         this.handleProjectSubmit = this.handleProjectSubmit.bind(this);
         this.updateProjectName = this.updateProjectName.bind(this);
+        this.updateProjectCheckbox = this.updateProjectCheckbox.bind(this);
     }
 
     render() {
@@ -57,24 +59,40 @@ export default class CalendarApp extends React.Component {
             <div className='mt-2 row'>
                 <div className="col-md-3">
                     {hasProject &&
-                    <p className="text-center">
-                        <strong> Projets</strong>
-                    </p>
+
+                        <div className="row p-2">
+                            <div className="col">
+                                <strong> Projets</strong>
+                            </div>
+                            <div className="col text-right">
+                                <input type="checkbox"
+                                       defaultChecked={this.state.displayArchived}
+                                       onChange={(e) => this.displayArchive(e)}
+                                       className="custom-control-input"
+                                       id="archiveAllCheckbox"/>
+                                <label className="custom-control-label"
+                                       htmlFor="archiveAllCheckbox">
+                                    Archivé
+                                </label>
+                            </div>
+
+                        </div>
                     }
 
                     <div id="external-events" className="pb-2">
                         {this.state.events.map(event => (
                             <div
                                 onClick={this.projectClick}
-                                className="fc-event row m-2"
+                                className={this.state.displayArchived === false && event.archived ? 'd-none' : 'fc-event row m-2'}
                                 style={{backgroundColor: event.color, color: event.textColor}}
                                 title={event.title}
                                 data-color={event.color}
                                 data-id={event.id}
+                                data-archived={event.archived}
                                 key={event.id}
                             >
                                 <div className="col">
-                                    {event.title}
+                                    {event.title} {event.archived ? '(archivé)': ''}
                                 </div>
                             </div>
                         ))}
@@ -210,6 +228,7 @@ export default class CalendarApp extends React.Component {
 
     // au click sur le projet
     projectClick = (event) => {
+
         const project = event.currentTarget.dataset;
 
         Alert.fire({
@@ -227,6 +246,21 @@ export default class CalendarApp extends React.Component {
                                    type="text"
                                    onChange={(e) => this.updateProjectName(e, project.id)}
                                    defaultValue={event.currentTarget.title}/>
+                        </div>
+                    </div>
+                    <div className="row mt-4  text-right">
+                        <div className="col">
+                            <div className="custom-control custom-checkbox">
+                                <input type="checkbox"
+                                       defaultChecked={project.archived === "true"}
+                                       onChange={(e) => this.updateProjectCheckbox(e, project.id)}
+                                       className="custom-control-input"
+                                       id="archiveCheckbox"/>
+                                <label className="custom-control-label"
+                                       htmlFor="archiveCheckbox">
+                                    Archivé
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </>
@@ -463,13 +497,25 @@ export default class CalendarApp extends React.Component {
             }
         }).then((result) => {
             this.updateEvent();
-            const currentMoment = this.calendarComponentRef.current.calendar.getDate();
-            this.updateStat(moment(currentMoment).format("YYYY-MM-DD"));
+            this.datesRender();
             this.setState(prevState => ({
                 events: prevState.events.map(
                     el => el.id === parseInt(id) ? {...el, title: result.data.title} : el
                 )
             }));
+        });
+
+    }
+
+    updateProjectCheckbox(event, id) {
+        axios({
+            url: this.props.url + '/projects/' + id,
+            method: 'put',
+            data: {
+                "archived": event.target.checked,
+            }
+        }).then(() => {
+            this.updateProject();
         });
 
     }
@@ -520,6 +566,12 @@ export default class CalendarApp extends React.Component {
             this.datesRender();
             this.updateEvent();
         })
+    }
+
+    displayArchive(e) {
+        this.setState({
+            displayArchived:e.target.checked
+        });
     }
 }
 
