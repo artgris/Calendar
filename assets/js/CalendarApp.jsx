@@ -606,7 +606,7 @@ export default class CalendarApp extends React.Component {
             url: this.props.url + '/events/' + event.id,
             method: 'put',
             data: {
-                "hours": parseInt(e.target.value),
+                "hours": parseFloat(e.target.value),
             }
         }).then(() => {
             this.datesRender();

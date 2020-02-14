@@ -76,9 +76,9 @@ class Event
     private $projectName;
 
     /**
-     * @var integer
+     * @var float
      *
-     * @ORM\Column(type="integer", options={"unsigned": true}, nullable=true)
+     * @ORM\Column(type="float", options={"unsigned": true}, nullable=true)
      * @Assert\GreaterThan(value="0")
      */
     private $hours;
@@ -149,12 +149,12 @@ class Event
         return $this->project->getColor();
     }
 
-    public function getHours(): ?int
+    public function getHours(): ?float
     {
         return $this->hours;
     }
 
-    public function setHours(?int $hours): void
+    public function setHours(?float $hours): void
     {
         $this->hours = $hours;
     }
