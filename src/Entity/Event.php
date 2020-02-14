@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         "get"={"security"="is_granted('ROLE_USER') or object.user == user"},
  *         "put"={"security"="is_granted('ROLE_USER') or object.user == user"},
  *     }
- *     @ORM\Entity(repositoryClass="App\Repository\EventRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
  */
 class Event
 {
@@ -76,9 +76,9 @@ class Event
     private $projectName;
 
     /**
-     * @var int
+     * @var integer
      *
-     * @ORM\Column(type="smallint", options={"unsigned": true}, nullable=true)
+     * @ORM\Column(type="integer", options={"unsigned": true}, nullable=true)
      * @Assert\GreaterThan(value="0")
      */
     private $hours;
@@ -159,27 +159,27 @@ class Event
         $this->hours = $hours;
     }
 
-    public function countDay()
+    public function countDay(User $user)
     {
         if ($this->end) {
+            $isWeekends = $user->isWeekends();
             $days = 0;
             $period = new DatePeriod($this->start, DateInterval::createFromDateString('1 day'), $this->end);
             foreach ($period as $dt) {
                 /** @var \DateTime $dt */
-                if ($dt->format('N') < 6) {
+                if ($isWeekends || (!$isWeekends && $dt->format('N') <= 5)) {
                     $days++;
                 }
             }
-
             return $days;
         }
 
         return 1;
     }
 
-    public function hoursByDay()
+    public function hoursByDay(User $user)
     {
-        return $this->hours / $this->countDay();
+        return $this->hours / $this->countDay($user);
     }
 
     public function getProjectName()

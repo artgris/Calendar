@@ -78,7 +78,7 @@ class EventRepository extends ServiceEntityRepository
                 if ($eventTmpp->getHours() === null) {
                     $div++;
                 } else {
-                    $hours += $eventTmpp->hoursByDay();
+                    $hours += $eventTmpp->hoursByDay($user);
                 }
             }
 
@@ -90,7 +90,7 @@ class EventRepository extends ServiceEntityRepository
                     $hours = $user->getWorkingHour();
                 }
                 // en heures
-                $stat[$eventTmp->getProject()->getTitle()] += $eventTmp->getHours() ? $eventTmp->hoursByDay() : ($user->getWorkingHour() - $hours) / $div;
+                $stat[$eventTmp->getProject()->getTitle()] += $eventTmp->getHours() ? $eventTmp->hoursByDay($user) : ($user->getWorkingHour() - $hours) / $div;
             }
         }
 

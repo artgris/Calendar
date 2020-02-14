@@ -88,7 +88,7 @@ export default class CalendarApp extends React.Component {
                             {this.state.events.map(event => (
                                 <div
                                     onClick={this.projectClick}
-                                    className={this.state.displayArchived === false && event.archived ? 'd-none' : 'fc-event col-6 mb-2'}
+                                    className={this.state.displayArchived === false && event.archived ? 'd-none' : 'fc-event col-md-6 mb-2'}
                                     title={event.title}
                                     data-color={event.color}
                                     data-id={event.id}
@@ -172,16 +172,19 @@ export default class CalendarApp extends React.Component {
                             </div>
                             <div className="col-12">
                                 <div className="row form-group">
-                                    <label htmlFor="update-working" className="col-sm-6 col-form-label">
-                                        Journée de travail (en heure)
+                                    <label htmlFor="update-working" className="col-6 col-form-label">
+                                        Journée de travail
                                     </label>
-                                    <div className="col-sm-3">
+                                    <div className="col-5 input-group ">
                                         <input id="update-working"
                                                className="form-control"
                                                value={this.state.workinghour}
                                                required
                                                onChange={this.updateWorkingHour}
                                                type="number"/>
+                                        <div className="input-group-append">
+                                            <span className="input-group-text">heures</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -360,7 +363,7 @@ export default class CalendarApp extends React.Component {
             allowEnterKey: false,
             html: <>
                 <div className="row mt-4 justify-content-center">
-                    <div className="input-group col-4 mb-1">
+                    <div className="input-group col-5 mb-1">
                         <input
                             className="form-control"
                             type="number"
