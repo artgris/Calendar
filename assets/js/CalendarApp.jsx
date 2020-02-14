@@ -83,23 +83,24 @@ export default class CalendarApp extends React.Component {
                     </div>
                     }
 
-                    <div id="external-events" className="pb-2">
-                        {this.state.events.map(event => (
-                            <div
-                                onClick={this.projectClick}
-                                className={this.state.displayArchived === false && event.archived ? 'd-none' : 'fc-event row m-2'}
-                                style={{backgroundColor: event.color, color: event.textColor}}
-                                title={event.title}
-                                data-color={event.color}
-                                data-id={event.id}
-                                data-archived={event.archived}
-                                key={event.id}
-                            >
-                                <div className="col">
-                                    {event.title} {event.archived ? '(archivé)' : ''}
+                    <div id="external-events" className="pb-2 col">
+                        <div className="row">
+                            {this.state.events.map(event => (
+                                <div
+                                    onClick={this.projectClick}
+                                    className={this.state.displayArchived === false && event.archived ? 'd-none' : 'fc-event col-6 mb-2'}
+                                    title={event.title}
+                                    data-color={event.color}
+                                    data-id={event.id}
+                                    data-archived={event.archived}
+                                    key={event.id}
+                                >
+                                    <div className="col"      style={{backgroundColor: event.color, color: event.textColor}}>
+                                        {event.title} {event.archived ? '(archivé)' : ''}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
 
                     {hasProject &&
