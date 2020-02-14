@@ -4,6 +4,9 @@
     <div id="root"
          data-url="{{ path('api_entrypoint') }}"
          data-user="{{ path('api_entrypoint') }}/users/{{ app.user.id }}"
+         data-userid="{{ app.user.id }}"
+         data-weekends="{{ app.user.weekends }}"
+         data-workinghour="{{ app.user.workingHour }}"
     ></div>
 {% endblock %}
 

@@ -15,7 +15,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  * @ApiResource(
  *     collectionOperations={},
- *     itemOperations={"get"}
+ *     itemOperations={
+ *         "get": {"security": "is_granted('ROLE_USER') or user == user"},
+ *         "put": {"security": "is_granted('ROLE_USER') or user == user"},
+ *     }
  * )
  */
 class User implements UserInterface
@@ -53,6 +56,22 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\Project", mappedBy="user", orphanRemoval=true)
      */
     private $projects;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", options={"default" : false})
+     */
+    private $weekends = false;
+
+    /**
+     * @var int
+     * @ORM\Column(type="smallint", options={"unsigned"=true}, options={"default" : 8})
+     * @Assert\GreaterThan(value="0")
+     * @Assert\LessThanOrEqual(value="24")
+     * @Assert\NotBlank()
+     */
+    private $workingHour = 8;
 
     public function __construct()
     {
@@ -199,4 +218,26 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function isWeekends(): ?bool
+    {
+        return $this->weekends;
+    }
+
+    public function setWeekends(?bool $weekends): void
+    {
+        $this->weekends = $weekends;
+    }
+
+    public function getWorkingHour(): ?int
+    {
+        return $this->workingHour;
+    }
+
+    public function setWorkingHour(?int $workingHour): void
+    {
+        $this->workingHour = $workingHour;
+    }
+
+
 }

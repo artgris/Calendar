@@ -30,8 +30,6 @@ final class UserFilter implements FilterInterface
             ->andWhere('o.user = :user')
                 ->setParameter('user', $user);
 
-
-
     }
 
     private function getUser(): ?User

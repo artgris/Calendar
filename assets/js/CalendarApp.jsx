@@ -30,6 +30,8 @@ export default class CalendarApp extends React.Component {
     calendarComponentRef = React.createRef();
     sketchComponentRef = React.createRef();
     state = {
+        weekends: this.props.weekends,
+        workinghour: this.props.workinghour,
         displayArchived: false,
         calendarEvents: [],
         events: [],
@@ -50,10 +52,11 @@ export default class CalendarApp extends React.Component {
         this.handleProjectSubmit = this.handleProjectSubmit.bind(this);
         this.updateProjectName = this.updateProjectName.bind(this);
         this.updateProjectCheckbox = this.updateProjectCheckbox.bind(this);
+        this.updateWeekendsCheckbox = this.updateWeekendsCheckbox.bind(this);
+        this.updateWorkingHour = this.updateWorkingHour.bind(this);
     }
 
     render() {
-
         const hasProject = this.state.events.length > 0;
         return (
             <div className='mt-2 row'>
@@ -145,6 +148,44 @@ export default class CalendarApp extends React.Component {
                             </button>
                         </form>
                     </div>
+                    <hr/>
+                    <div className="row p-2">
+                        <div className="col-12">
+                            <p className="text-center">
+                                <strong>Paramétrage du calendrier</strong>
+                            </p>
+                        </div>
+                        <div className="row p-2">
+                            <div className="col-12 mb-2">
+                                <div className="custom-control custom-checkbox">
+                                    <input type="checkbox"
+                                           defaultChecked={this.state.weekends === '1'}
+                                           onChange={(e) => this.updateWeekendsCheckbox(e)}
+                                           className="custom-control-input"
+                                           id="weekendsCheckbox"/>
+                                    <label className="custom-control-label"
+                                           htmlFor="weekendsCheckbox">
+                                        Semaine complète
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="col-12">
+                                <div className="row form-group">
+                                    <label htmlFor="update-working" className="col-sm-6 col-form-label">
+                                        Journée de travail (en heure)
+                                    </label>
+                                    <div className="col-sm-3">
+                                        <input id="update-working"
+                                               className="form-control"
+                                               value={this.state.workinghour}
+                                               required
+                                               onChange={this.updateWorkingHour}
+                                               type="number"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className="col pb-3">
                     <FullCalendar
@@ -156,7 +197,7 @@ export default class CalendarApp extends React.Component {
                         }}
                         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                         ref={this.calendarComponentRef}
-                        weekends={false}
+                        weekends={this.state.weekends === '1'}
                         events={this.state.calendarEvents}
                         eventLimit={true}
                         editable={true}
@@ -574,9 +615,42 @@ export default class CalendarApp extends React.Component {
             displayArchived: e.target.checked
         });
     }
+
+    updateWeekendsCheckbox(e) {
+        axios({
+            url: this.props.url + '/users/' + this.props.userid,
+            method: 'put',
+            data: {
+                "weekends": e.target.checked,
+            }
+        }).then((result) => {
+            this.updateStat();
+            this.calendarComponentRef.current.calendar.setOption('weekends', result.data.weekends)
+        });
+    }
+
+    updateWorkingHour(event) {
+        console.log(event.target.value)
+        axios({
+            url: this.props.url + '/users/' + this.props.userid,
+            method: 'put',
+            data: {
+                "workingHour": parseInt(event.target.value),
+            }
+        }).then((result) => {
+            console.log(result.data.workingHour)
+            this.setState({
+                workinghour: result.data.workingHour
+            });
+            this.updateStat();
+        });
+    }
 }
 
 CalendarApp.propTypes = {
     url: PropTypes.string,
     user: PropTypes.string,
+    weekends: PropTypes.string,
+    userid: PropTypes.string,
+    workinghour: PropTypes.string,
 };

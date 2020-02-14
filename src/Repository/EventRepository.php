@@ -27,6 +27,8 @@ class EventRepository extends ServiceEntityRepository
 
     public function getStatArray(User $user, $date = null)
     {
+        $isWeekends = $user->isWeekends();
+
         if ($date) {
             $startMonth = (new \DateTime($date))->modify('first day of this month');
             $endMonth = (clone $startMonth)->modify('+ 1 month');
@@ -55,10 +57,12 @@ class EventRepository extends ServiceEntityRepository
             if ($end) {
                 $period = new DatePeriod($start, DateInterval::createFromDateString('1 day'), $end);
                 foreach ($period as $dt) {
+
                     /** @var \DateTime $dt */
-                    $weekday = $dt->format('N') < 6;
-                    if ($dt >= $startMonth && $dt < $endMonth && $weekday) {
-                        $dateSaved[$dt->format('d/m/Y')][] = $event;
+                    if ($dt >= $startMonth && $dt < $endMonth) {
+                        if ($isWeekends || (!$isWeekends && $this->isAWeekDay($dt))) {
+                            $dateSaved[$dt->format('d/m/Y')][] = $event;
+                        }
                     }
                 }
             } else {
@@ -82,11 +86,11 @@ class EventRepository extends ServiceEntityRepository
                 if (!isset($stat[$eventTmp->getProject()->getTitle()])) {
                     $stat[$eventTmp->getProject()->getTitle()] = 0;
                 }
-                if ($hours> 8) {
-                    $hours = 8;
+                if ($hours > $user->getWorkingHour()) {
+                    $hours = $user->getWorkingHour();
                 }
                 // en heures
-                $stat[$eventTmp->getProject()->getTitle()] += $eventTmp->getHours() ? $eventTmp->hoursByDay() : (8 - $hours) / $div;
+                $stat[$eventTmp->getProject()->getTitle()] += $eventTmp->getHours() ? $eventTmp->hoursByDay() : ($user->getWorkingHour() - $hours) / $div;
             }
         }
 
@@ -100,38 +104,38 @@ class EventRepository extends ServiceEntityRepository
         $total = 0;
         foreach ($stat as $key => $value) {
             $total += $value;
-            $valueFormat = $this->formatDays($value);
+            $valueFormat = $this->formatDays($value, $user);
             $statArray[] = $key.': '.$valueFormat;
         }
         return [
-            'total' => $this->formatDays($total),
-            'totalCalcul' => $this->totalDaysByDate($date),
+            'total' => $this->formatDays($total, $user),
+            'totalCalcul' => $this->totalDaysByDate($user, $date),
             'projects' => $statArray,
         ];
     }
 
-    private function formatDays($value)
+    private function formatDays($value, User $user)
     {
-        
+
         if ($value == 0) {
             return '0J';
         }
-        
-        if ($value < 8) {
+
+        if ($value < $user->getWorkingHour()) {
             $valueFormat = $this->convertHoursToMinutes($value);
         } else {
-            $hours = round(fmod($value, 8), 2);
+            $hours = round(fmod($value, $user->getWorkingHour()), 2);
             $hoursFormat = '';
             if ($hours) {
                 $hoursFormat = $this->convertHoursToMinutes($hours, true);
             }
-            $valueFormat = (int)($value / 8).'J'.$hoursFormat;
+            $valueFormat = (int)($value / $user->getWorkingHour()).'J'.$hoursFormat;
         }
 
         return $valueFormat;
     }
 
-    private function totalDaysByDate($date = null)
+    private function totalDaysByDate(User $user, $date = null)
     {
         if ($date) {
             $startMonth = (new \DateTime($date))->modify('first day of this month');
@@ -143,11 +147,13 @@ class EventRepository extends ServiceEntityRepository
 
         $period = new DatePeriod($startMonth, DateInterval::createFromDateString('1 day'), $endMonth);
         $countDays = 0;
+        $isWeekends = $user->isWeekends();
         foreach ($period as $dt) {
             /** @var \DateTime $dt */
-            $weekday = $dt->format('N') < 6;
-            if ($dt >= $startMonth && $dt < $endMonth && $weekday) {
-                $countDays++;
+            if ($dt >= $startMonth && $dt < $endMonth) {
+                if ($isWeekends || (!$isWeekends && $this->isAWeekDay($dt))) {
+                    $countDays++;
+                }
             }
         }
 
@@ -155,12 +161,19 @@ class EventRepository extends ServiceEntityRepository
         $currentMonth = $startMonth->format('m');
         foreach ($res as $day) {
             /** @var Holiday $day */
-            if ($currentMonth === $day->format('m') && $day->format('N') < 6) {
-                $countDays--;
+            if ($currentMonth === $day->format('m')) {
+                if ($isWeekends || (!$isWeekends && $this->isAWeekDay($day))) {
+                    $countDays--;
+                }
             }
         }
 
         return $countDays.'J';
+    }
+
+    private function isAWeekDay(\DateTime $dateTime): bool
+    {
+        return $dateTime->format('N') <= 5;
     }
 
     private function convertHoursToMinutes($hours, $and = false)
