@@ -66,7 +66,9 @@ class EventRepository extends ServiceEntityRepository
                     }
                 }
             } else {
-                $dateSaved[$start->format('d/m/Y')][] = $event;
+                if ($isWeekends || (!$isWeekends && $this->isAWeekDay($start))) {
+                    $dateSaved[$start->format('d/m/Y')][] = $event;
+                }
             }
         }
         $stat = [];
@@ -93,7 +95,6 @@ class EventRepository extends ServiceEntityRepository
                 $stat[$eventTmp->getProject()->getTitle()] += $eventTmp->getHours() ? $eventTmp->hoursByDay($user) : ($user->getWorkingHour() - $hours) / $div;
             }
         }
-
         return $stat;
     }
 
