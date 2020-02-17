@@ -77,7 +77,6 @@ class EventRepository extends ServiceEntityRepository
             $div = 0;
             $hours = 0;
             foreach ($eventsTmp as $eventTmp) {
-                dump($eventTmp->getId());
                 /** @var Event $eventTmp */
                 if ($eventTmp->getHours() === null) {
                     $div++;
