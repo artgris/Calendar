@@ -228,7 +228,6 @@ export default class CalendarApp extends React.Component {
                         </p>
                     </div>
                     <ul>
-                        {console.log(this.state.stat.projects)}
                         {Object.keys(this.state.stat.projects).map(key => (
                             <li key={key}>{this.state.stat.projects[key].hours}
                                 <ul>

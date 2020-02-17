@@ -76,14 +76,17 @@ class EventRepository extends ServiceEntityRepository
         foreach ($dateSaved as $eventsTmp) {
             $div = 0;
             $hours = 0;
-            foreach ($eventsTmp as $eventTmp) {
-                /** @var Event $eventTmp */
-                if ($eventTmp->getHours() === null) {
+
+            foreach ($eventsTmp as $eventTmpp) {
+                /** @var Event $eventTmpp */
+                if ($eventTmpp->getHours() === null) {
                     $div++;
                 } else {
-                    $hours += $eventTmp->hoursByDay($user);
+                    $hours += $eventTmpp->hoursByDay($user);
                 }
+            }
 
+            foreach ($eventsTmp as $eventTmp) {
                 if (!isset($stat[$eventTmp->getProject()->getTitle()])) {
                     $stat[$eventTmp->getProject()->getTitle()] = ['hours' => 0, 'list' => []];
                 }
