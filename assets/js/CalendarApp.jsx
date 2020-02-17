@@ -59,7 +59,6 @@ export default class CalendarApp extends React.Component {
 
     render() {
         const hasProject = this.state.events.length > 0;
-        const hasStat = this.state.stat.projects;
         return (
             <div className='mt-2 row'>
                 <div className="col-md-3">
@@ -228,8 +227,8 @@ export default class CalendarApp extends React.Component {
                             <strong>Récapitulatif du mois</strong>
                         </p>
                     </div>
-                    {hasStat &&
                     <ul>
+                        {console.log(this.state.stat.projects)}
                         {Object.keys(this.state.stat.projects).map(key => (
                             <li key={key}>{this.state.stat.projects[key].hours}
                                 <ul>
@@ -240,7 +239,6 @@ export default class CalendarApp extends React.Component {
                             </li>
                         ))}
                     </ul>
-                    }
                     <p><strong>Total : </strong> {this.state.stat.total}</p>
                     {this.state.stat.totalCalcul !== null &&
                     <p><strong>Total calculé : </strong> {this.state.stat.totalCalcul}</p>
