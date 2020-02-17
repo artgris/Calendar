@@ -279,7 +279,9 @@ export default class CalendarApp extends React.Component {
             this.setState({
                 calendarEvents: resultdata.data
             });
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     };
 
     // au click sur le projet
@@ -347,8 +349,8 @@ export default class CalendarApp extends React.Component {
                     this.datesRender();
                 });
             }
-        }).catch((error) => {
-            alert(error.message)
+        }).catch(() => {
+            this.displayErrorMessage()
         })
     };
 
@@ -421,7 +423,9 @@ export default class CalendarApp extends React.Component {
                     this.datesRender();
                 });
             }
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     };
 
     // Triggered when dragging stops and the event has moved to a different day/time.
@@ -443,7 +447,11 @@ export default class CalendarApp extends React.Component {
                 )
             }));
             this.datesRender();
+
+        }).catch(() => {
+            this.displayErrorMessage()
         })
+
     };
 
 
@@ -463,7 +471,10 @@ export default class CalendarApp extends React.Component {
                 calendarEvents: [...this.state.calendarEvents, result.data]
             });
             this.datesRender();
-        });
+
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     };
 
     // Called when an external draggable element with associated event data was dropped onto the calendar.
@@ -504,13 +515,12 @@ export default class CalendarApp extends React.Component {
             });
 
         }).catch((error) => {
-
             if (error.response.data.violations) {
                 this.setState({
                     errors: error.response.data.violations
                 })
             } else {
-                alert(error.message)
+                this.displayErrorMessage()
             }
         })
     };
@@ -535,7 +545,9 @@ export default class CalendarApp extends React.Component {
                 })
             });
             this.datesRender();
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     };
 
     // changement de nom de projet dans le form Projet
@@ -553,7 +565,9 @@ export default class CalendarApp extends React.Component {
         }).then(() => {
             this.updateProject();
             this.updateEvent();
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     }
 
     updateProjectName(event, id) {
@@ -571,7 +585,9 @@ export default class CalendarApp extends React.Component {
                     el => el.id === parseInt(id) ? {...el, title: result.data.title} : el
                 )
             }));
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
 
     }
 
@@ -584,7 +600,9 @@ export default class CalendarApp extends React.Component {
             }
         }).then(() => {
             this.updateProject();
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
 
     }
 
@@ -609,7 +627,9 @@ export default class CalendarApp extends React.Component {
             this.setState({
                 stat: result.data
             });
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     };
 
     updateProject() {
@@ -620,7 +640,9 @@ export default class CalendarApp extends React.Component {
             this.setState({
                 events: resultdata.data['hydra:member']
             });
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     }
 
     updateEventHours(e, event) {
@@ -669,7 +691,6 @@ export default class CalendarApp extends React.Component {
     }
 
     updateWorkingHour(event) {
-        console.log(event.target.value)
         axios({
             url: this.props.url + '/users/' + this.props.userid,
             method: 'put',
@@ -677,12 +698,16 @@ export default class CalendarApp extends React.Component {
                 "workingHour": parseInt(event.target.value),
             }
         }).then((result) => {
-            console.log(result.data.workingHour)
             this.setState({
                 workinghour: result.data.workingHour
             });
             this.updateStat();
         });
+    }
+
+    displayErrorMessage () {
+        alert('Votre session a expiré. Veuillez vous reconnecter');
+        window.location.href = '/login';
     }
 }
 
