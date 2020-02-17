@@ -59,7 +59,7 @@ export default class CalendarApp extends React.Component {
 
     render() {
         const hasProject = this.state.events.length > 0;
-        const hasStat = Object.entries(this.state.stat.projects).length === 0;
+        const hasStat = (this.state.stat.projects === undefined || this.state.stat.projects === null) === false;
         return (
             <div className='mt-2 row'>
                 <div className="col-md-3">
