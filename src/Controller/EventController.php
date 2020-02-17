@@ -28,6 +28,7 @@ class EventController extends AbstractController
                 'textColor' => $event->getTextColor(),
                 'title' => $event->getTitle(),
                 'hours' => $event->getHours(),
+                'info' => $event->getInfo(),
                 'projectName' => $event->getProjectName(),
                 'allDay' => true,
                 'start' => $event->getStart()->format('Y-m-d\TH:i:sP'),

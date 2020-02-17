@@ -94,6 +94,12 @@ class Event
      */
     public $textColor;
 
+    /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $info;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -146,7 +152,7 @@ class Event
 
     public function getColor(): ?string
     {
-        return $this->project->getColor();
+       return  !empty($this->project->getColor()) ? $this->project->getColor() : '#000';
     }
 
     public function getHours(): ?float
@@ -203,4 +209,15 @@ class Event
     {
         return $this->project->getTextColor();
     }
+
+    public function getInfo(): ?string
+    {
+        return $this->info;
+    }
+
+    public function setInfo(?string $info): void
+    {
+        $this->info = $info;
+    }
+
 }

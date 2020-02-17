@@ -37,6 +37,7 @@
         "react": "^16.12.0",
         "react-bootstrap": "^1.0.0-beta.16",
         "react-color": "^2.17.3",
+        "react-debounce-input": "^3.2.2",
         "react-dom": "^16.12.0",
         "serialize-javascript": "^2.1.2",
         "sweetalert2": "^9.4.1",

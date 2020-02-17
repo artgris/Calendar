@@ -71,28 +71,31 @@ class EventRepository extends ServiceEntityRepository
                 }
             }
         }
+
         $stat = [];
         foreach ($dateSaved as $eventsTmp) {
             $div = 0;
             $hours = 0;
-            foreach ($eventsTmp as $eventTmpp) {
-                /** @var Event $eventTmpp */
-                if ($eventTmpp->getHours() === null) {
+            foreach ($eventsTmp as $eventTmp) {
+                dump($eventTmp->getId());
+                /** @var Event $eventTmp */
+                if ($eventTmp->getHours() === null) {
                     $div++;
                 } else {
-                    $hours += $eventTmpp->hoursByDay($user);
+                    $hours += $eventTmp->hoursByDay($user);
                 }
-            }
 
-            foreach ($eventsTmp as $eventTmp) {
                 if (!isset($stat[$eventTmp->getProject()->getTitle()])) {
-                    $stat[$eventTmp->getProject()->getTitle()] = 0;
+                    $stat[$eventTmp->getProject()->getTitle()] = ['hours' => 0, 'list' => []];
                 }
                 if ($hours > $user->getWorkingHour()) {
                     $hours = $user->getWorkingHour();
                 }
                 // en heures
-                $stat[$eventTmp->getProject()->getTitle()] += $eventTmp->getHours() ? $eventTmp->hoursByDay($user) : ($user->getWorkingHour() - $hours) / $div;
+                $stat[$eventTmp->getProject()->getTitle()]['hours'] += $eventTmp->getHours() ? $eventTmp->hoursByDay($user) : ($user->getWorkingHour() - $hours) / $div;
+                if ($eventTmp->getInfo() && !\in_array($eventTmp->getInfo(), $stat[$eventTmp->getProject()->getTitle()]['list'])) {
+                    $stat[$eventTmp->getProject()->getTitle()]['list'][] = $eventTmp->getInfo();
+                }
             }
         }
         return $stat;
@@ -104,9 +107,9 @@ class EventRepository extends ServiceEntityRepository
         $statArray = [];
         $total = 0;
         foreach ($stat as $key => $value) {
-            $total += $value;
-            $valueFormat = $this->formatDays($value, $user);
-            $statArray[] = $key.': '.$valueFormat;
+            $total += $value['hours'];
+            $valueFormat = $this->formatDays($value['hours'], $user);
+            $statArray[$key] = ['hours' => $key.': '.$valueFormat, 'list' => $value['list']];
         }
         return [
             'total' => $this->formatDays($total, $user),

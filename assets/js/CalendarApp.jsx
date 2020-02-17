@@ -11,6 +11,7 @@ import * as axios from "axios";
 import moment from "moment";
 import 'moment/locale/fr';
 import Sketch from "./Sketch";
+import {DebounceInput} from 'react-debounce-input';
 
 const Alert = withReactContent(Swal);
 
@@ -37,7 +38,7 @@ export default class CalendarApp extends React.Component {
         events: [],
         value: '',
         stat: {
-            projects: [],
+            projects: {},
             total: '',
             totalCalcul: ''
         },
@@ -90,12 +91,12 @@ export default class CalendarApp extends React.Component {
                                     onClick={this.projectClick}
                                     className={this.state.displayArchived === false && event.archived ? 'd-none' : 'fc-event col-md-6 mb-2'}
                                     title={event.title}
-                                    data-color={event.color}
+                                    data-color={event.backgroundColor}
                                     data-id={event.id}
                                     data-archived={event.archived}
                                     key={event.id}
                                 >
-                                    <div className="col"      style={{backgroundColor: event.color, color: event.textColor}}>
+                                    <div className="col" style={{backgroundColor: event.backgroundColor, color: event.textColor}}>
                                         {event.title} {event.archived ? '(archivé)' : ''}
                                     </div>
                                 </div>
@@ -131,22 +132,25 @@ export default class CalendarApp extends React.Component {
                                         ref={this.sketchComponentRef}
                                     />
                                     <div className="col">
-                                        <input className="form-control mb-1" placeholder="Nom du Projet"
-                                               value={this.state.value}
-                                               required
-                                               onChange={this.handleProjectNameChange}
-                                               type="text"/>
+                                        <div className="form-group input-group">
+                                            <input className="form-control" placeholder="Nom du Projet"
+                                                   value={this.state.value}
+                                                   required
+                                                   onChange={this.handleProjectNameChange}
+                                                   type="text"/>
+                                            <div className="input-group-append">
+                                                <button type="submit" className="btn btn-outline-primary">
+                                                    <i className="fas fa-plus"/>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
                                 <input className="form-control"
                                        value={this.state.background}
                                        type="hidden"/>
 
                             </div>
-                            <button type="submit" className="btn btn-sm btn-outline-primary">
-                                <i className="fas fa-plus-circle"/> Ajouter le Projet
-                            </button>
                         </form>
                     </div>
                     <hr/>
@@ -224,8 +228,14 @@ export default class CalendarApp extends React.Component {
                     </div>
 
                     <ul>
-                        {this.state.stat.projects.map(event => (
-                            <li key={event + 'Stat'}>{event}</li>
+                        {Object.keys(this.state.stat.projects).map(key => (
+                            <li key={key}>{this.state.stat.projects[key].hours}
+                            <ul>
+                                {this.state.stat.projects[key].list.map(info => (
+                                    <li key={key+info}>{info}</li>
+                                ))}
+                            </ul>
+                            </li>
                         ))}
                     </ul>
                     <p><strong>Total : </strong> {this.state.stat.total}</p>
@@ -374,6 +384,18 @@ export default class CalendarApp extends React.Component {
                         <div className="input-group-append">
                             <span className="input-group-text">heures</span>
                         </div>
+                    </div>
+                </div>
+                <div className="row mt-4 justify-content-center">
+                    <div className="input-group col-8 mb-1">
+                        <DebounceInput
+                            element="textarea"
+                            minLength={2}
+                            debounceTimeout={300}
+                            onChange={(e) => this.updateEventInfo(e, eventClick.event)}
+                            className="form-control"
+                            value={eventClick.event.extendedProps.info}
+                        />
                     </div>
                 </div>
                 <p className="mt-4">
@@ -607,6 +629,19 @@ export default class CalendarApp extends React.Component {
             method: 'put',
             data: {
                 "hours": parseFloat(e.target.value),
+            }
+        }).then(() => {
+            this.datesRender();
+            this.updateEvent();
+        })
+    }
+
+    updateEventInfo(e, event) {
+        axios({
+            url: this.props.url + '/events/' + event.id,
+            method: 'put',
+            data: {
+                "info": e.target.value,
             }
         }).then(() => {
             this.datesRender();
