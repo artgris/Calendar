@@ -43,7 +43,7 @@ class Holidays
     }
 
 
-    private function getProviderFromString(string $provider) {
+    private function getProviderFromString(?string $provider = "LU") {
 
         if ($provider === 'LU') {
             return "App\Service\Yasumi\Luxembourg";

@@ -69,7 +69,7 @@ class User implements UserInterface
      *
      * @ORM\Column(type="string", options={"default" : "LU"}, nullable=true)
      */
-    private $holiday;
+    private $holiday = "LU";
 
     /**
      * @var int
