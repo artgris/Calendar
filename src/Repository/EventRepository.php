@@ -108,6 +108,11 @@ class EventRepository extends ServiceEntityRepository
         $stat = $this->getStatArray($user, $date);
         $statArray = [];
         $total = 0;
+
+        uasort($stat, function ($a, $b) {
+            return ($a['hours']< $b['hours']);
+        });
+
         foreach ($stat as $key => $value) {
             $total += $value['hours'];
             $valueFormat = $this->formatDays($value['hours'], $user);
