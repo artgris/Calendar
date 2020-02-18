@@ -116,7 +116,7 @@ export default class CalendarApp extends React.Component {
 
                     <div className="row p-2">
                         <div className="col-12">
-                            <p className="text-center">
+                            <p>
                                 <strong>Ajouter un Projet</strong>
                             </p>
                         </div>
@@ -162,7 +162,7 @@ export default class CalendarApp extends React.Component {
                     <hr/>
                     <div className="row p-2">
                         <div className="col-12">
-                            <p className="text-center">
+                            <p>
                                 <strong>Paramétrage du calendrier</strong>
                             </p>
                         </div>
@@ -349,7 +349,7 @@ export default class CalendarApp extends React.Component {
             ,
             confirmButtonColor: "#d33",
             confirmButtonText: "Supprimer",
-            cancelButtonText: "Annuler",
+            cancelButtonText: "Fermer",
             allowEscapeKey: false,
             allowEnterKey: false,
         }).then(result => {
@@ -431,7 +431,7 @@ export default class CalendarApp extends React.Component {
             showCancelButton: true,
             confirmButtonColor: "#d33",
             confirmButtonText: "Supprimer",
-            cancelButtonText: "Annuler",
+            cancelButtonText: "Fermer",
         }).then(result => {
             if (result.value) {
                 axios({

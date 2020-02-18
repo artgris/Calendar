@@ -116,7 +116,7 @@ class EventRepository extends ServiceEntityRepository
         foreach ($stat as $key => $value) {
             $total += $value['hours'];
             $valueFormat = $this->formatDays($value['hours'], $user);
-            $statArray[$key] = ['hours' => $key.': '.$valueFormat, 'list' => $value['list']];
+            $statArray[$key] = ['hours' => $key.' : '.$valueFormat, 'list' => $value['list']];
         }
         return [
             'total' => $this->formatDays($total, $user),
