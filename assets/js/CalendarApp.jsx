@@ -12,6 +12,7 @@ import moment from "moment";
 import 'moment/locale/fr';
 import Sketch from "./Sketch";
 import {DebounceInput} from 'react-debounce-input';
+import Notifications, {notify} from 'react-notify-toast';
 
 const Alert = withReactContent(Swal);
 
@@ -267,6 +268,7 @@ export default class CalendarApp extends React.Component {
                     <p><strong>Total calculé : </strong> {this.state.stat.totalCalcul}</p>
                     }
                 </div>
+                <Notifications options={{zIndex: 2000}} />
             </div>
         )
     }
@@ -324,10 +326,10 @@ export default class CalendarApp extends React.Component {
                             color={project.color}
                         />
                         <div className="col">
-                            <input className="form-control mb-1"
-                                   type="text"
+                            <DebounceInput className="form-control mb-1"
+                                   debounceTimeout={300}
                                    onChange={(e) => this.updateProjectName(e, project.id)}
-                                   defaultValue={event.currentTarget.title}/>
+                                   value={event.currentTarget.title}/>
                         </div>
                     </div>
                     <div className="row mt-4  text-right">
@@ -360,6 +362,7 @@ export default class CalendarApp extends React.Component {
                     url: this.props.url + '/projects/' + key,
                     method: 'delete',
                 }).then(() => {
+                    this.showNotif("Projet supprimé");
                     this.setState({
                         events: this.state.events.filter(function (event) {
                             return event.id !== parseInt(key)
@@ -416,7 +419,6 @@ export default class CalendarApp extends React.Component {
                     <div className="input-group col-8 mb-1">
                         <DebounceInput
                             element="textarea"
-                            minLength={2}
                             debounceTimeout={300}
                             onChange={(e) => this.updateEventInfo(e, eventClick.event)}
                             className="form-control"
@@ -438,6 +440,7 @@ export default class CalendarApp extends React.Component {
                     url: this.props.url + '/events/' + eventClick.event.id,
                     method: 'delete',
                 }).then(() => {
+                    this.showNotif("Événement supprimé");
                     eventClick.event.remove();
                     this.setState({
                         calendarEvents: this.state.calendarEvents.filter(function (event) {
@@ -464,6 +467,7 @@ export default class CalendarApp extends React.Component {
                 "end": eventDropInfo.event.end ? moment(eventDropInfo.event.end).format("YYYY-MM-DD") : null,
             }
         }).then((result) => {
+            this.showNotif("Événement modifié");
             let key = parseInt(eventDropInfo.event.id);
             this.setState(prevState => ({
                 calendarEvents: prevState.calendarEvents.map(
@@ -491,6 +495,7 @@ export default class CalendarApp extends React.Component {
                 "project": this.props.url + '/projects/' + value.draggedEl.getAttribute("data-id")
             }
         }).then((result) => {
+            this.showNotif("Événement ajouté");
             this.setState({
                 calendarEvents: [...this.state.calendarEvents, result.data]
             });
@@ -532,6 +537,7 @@ export default class CalendarApp extends React.Component {
                 "color": this.state.background
             }
         }).then((result) => {
+            this.showNotif("Projet ajouté");
             this.setState({
                 events: [...this.state.events, result.data],
                 value: '',
@@ -549,31 +555,6 @@ export default class CalendarApp extends React.Component {
         })
     };
 
-    // supprimer un projet
-    removeProject = (event) => {
-        event.preventDefault();
-        const key = event.target[0].value;
-        const url = this.props.url;
-        axios({
-            url: this.props.url + '/projects/' + key,
-            method: 'delete',
-        }).then(() => {
-            this.setState({
-                events: this.state.events.filter(function (event) {
-                    return event.id !== parseInt(key)
-                })
-            });
-            this.setState({
-                calendarEvents: this.state.calendarEvents.filter(function (event) {
-                    return event.project !== url + '/projects/' + parseInt(key)
-                })
-            });
-            this.datesRender();
-        }).catch(() => {
-            this.displayErrorMessage()
-        })
-    };
-
     // changement de nom de projet dans le form Projet
     handleProjectNameChange(event) {
         this.setState({value: event.target.value});
@@ -587,6 +568,7 @@ export default class CalendarApp extends React.Component {
                 "color": color,
             }
         }).then(() => {
+            this.showNotif("Projet modifié");
             this.updateProject();
             this.updateEvent();
         }).catch(() => {
@@ -602,6 +584,7 @@ export default class CalendarApp extends React.Component {
                 "title": event.target.value,
             }
         }).then((result) => {
+            this.showNotif("Projet renommé");
             this.updateEvent();
             this.datesRender();
             this.setState(prevState => ({
@@ -623,6 +606,7 @@ export default class CalendarApp extends React.Component {
                 "archived": event.target.checked,
             }
         }).then(() => {
+            this.showNotif("Projet modifié");
             this.updateProject();
         }).catch(() => {
             this.displayErrorMessage()
@@ -677,6 +661,7 @@ export default class CalendarApp extends React.Component {
                 "hours": parseFloat(e.target.value),
             }
         }).then(() => {
+            this.showNotif("Événement modifié");
             this.datesRender();
             this.updateEvent();
         })
@@ -690,6 +675,7 @@ export default class CalendarApp extends React.Component {
                 "info": e.target.value,
             }
         }).then(() => {
+            this.showNotif("Événement modifié");
             this.datesRender();
             this.updateEvent();
         })
@@ -709,6 +695,7 @@ export default class CalendarApp extends React.Component {
                 "weekends": e.target.checked,
             }
         }).then((result) => {
+            this.showNotif("Calendrier modifié");
             this.updateStat();
             this.calendarComponentRef.current.calendar.setOption('weekends', result.data.weekends)
         });
@@ -722,6 +709,7 @@ export default class CalendarApp extends React.Component {
                 "workingHour": parseInt(event.target.value),
             }
         }).then((result) => {
+            this.showNotif("Calendrier modifié");
             this.setState({
                 workinghour: result.data.workingHour
             });
@@ -730,7 +718,6 @@ export default class CalendarApp extends React.Component {
     }
 
     updateHoliday(event) {
-        
         axios({
             url: this.props.url + '/users/' + this.props.userid,
             method: 'put',
@@ -738,6 +725,7 @@ export default class CalendarApp extends React.Component {
                 "holiday": event.target.value,
             }
         }).then((result) => {
+            this.showNotif("Calendrier modifié");
             this.setState({
                 holiday: result.data.holiday
             });
@@ -747,8 +735,11 @@ export default class CalendarApp extends React.Component {
     }
 
     displayErrorMessage() {
-        // alert('Votre session a expiré. Veuillez vous reconnecter');
-        // window.location.href = '/login';
+        notify.show("Votre session a expiré. Veuillez vous reconnecter", "error", 1500);
+    }
+
+    showNotif(message = "Mise à jour enregistrée") {
+        notify.show(message, "success", 1500);
     }
 }
 
