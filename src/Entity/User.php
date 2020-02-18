@@ -65,6 +65,13 @@ class User implements UserInterface
     private $weekends = false;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", options={"default" : "LU"}, nullable=true)
+     */
+    private $holiday;
+
+    /**
      * @var int
      * @ORM\Column(type="smallint", options={"unsigned"=true}, options={"default" : 8})
      * @Assert\GreaterThan(value="0")
@@ -239,5 +246,14 @@ class User implements UserInterface
         $this->workingHour = $workingHour;
     }
 
+    public function getHoliday(): ?string
+    {
+        return $this->holiday;
+    }
+
+    public function setHoliday(?string $holiday): void
+    {
+        $this->holiday = $holiday;
+    }
 
 }

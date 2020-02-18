@@ -32,6 +32,7 @@ export default class CalendarApp extends React.Component {
     sketchComponentRef = React.createRef();
     state = {
         weekends: this.props.weekends,
+        holiday: this.props.holiday,
         workinghour: this.props.workinghour,
         displayArchived: false,
         calendarEvents: [],
@@ -55,10 +56,14 @@ export default class CalendarApp extends React.Component {
         this.updateProjectCheckbox = this.updateProjectCheckbox.bind(this);
         this.updateWeekendsCheckbox = this.updateWeekendsCheckbox.bind(this);
         this.updateWorkingHour = this.updateWorkingHour.bind(this);
+        this.updateHoliday = this.updateHoliday.bind(this);
     }
 
     render() {
         const hasProject = this.state.events.length > 0;
+        const holidayOptions = Object.keys(window.YASUMI_PROVIDERS).map(key =>
+            <option key={key} value={key}>{window.YASUMI_PROVIDERS[key]}</option>
+        );
         return (
             <div className='mt-2 row'>
                 <div className="col-md-3">
@@ -162,7 +167,7 @@ export default class CalendarApp extends React.Component {
                             </p>
                         </div>
                         <div className="row p-2">
-                            <div className="col-12 mb-2">
+                            <div className="col-12 mb-3">
                                 <div className="custom-control custom-checkbox">
                                     <input type="checkbox"
                                            defaultChecked={this.state.weekends === '1'}
@@ -177,10 +182,10 @@ export default class CalendarApp extends React.Component {
                             </div>
                             <div className="col-12">
                                 <div className="row form-group">
-                                    <label htmlFor="update-working" className="col-6 col-form-label">
+                                    <label htmlFor="update-working" className="col-5 col-form-label">
                                         Journée de travail
                                     </label>
-                                    <div className="col-5 input-group ">
+                                    <div className="col-7 input-group ">
                                         <input id="update-working"
                                                className="form-control"
                                                value={this.state.workinghour}
@@ -193,6 +198,25 @@ export default class CalendarApp extends React.Component {
                                     </div>
                                 </div>
                             </div>
+                            <div className="col-12">
+                                <div className="row form-group">
+                                    <label htmlFor="select-holiday" className="col-5 col-form-label">
+                                        Jours fériés
+                                    </label>
+                                    <div className="col-7">
+                                        <select id="select-holiday"
+                                                value={this.state.holiday}
+                                                onChange={this.updateHoliday}
+                                                className="form-control"
+                                        >
+                                            <option/>
+                                            {holidayOptions}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -705,9 +729,26 @@ export default class CalendarApp extends React.Component {
         });
     }
 
-    displayErrorMessage () {
-        alert('Votre session a expiré. Veuillez vous reconnecter');
-        window.location.href = '/login';
+    updateHoliday(event) {
+        
+        axios({
+            url: this.props.url + '/users/' + this.props.userid,
+            method: 'put',
+            data: {
+                "holiday": event.target.value,
+            }
+        }).then((result) => {
+            this.setState({
+                holiday: result.data.holiday
+            });
+            this.updateEvent();
+            this.updateStat();
+        });
+    }
+
+    displayErrorMessage() {
+        // alert('Votre session a expiré. Veuillez vous reconnecter');
+        // window.location.href = '/login';
     }
 }
 
@@ -715,6 +756,7 @@ CalendarApp.propTypes = {
     url: PropTypes.string,
     user: PropTypes.string,
     weekends: PropTypes.string,
+    holiday: PropTypes.string,
     userid: PropTypes.string,
     workinghour: PropTypes.string,
 };

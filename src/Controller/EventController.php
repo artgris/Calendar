@@ -18,7 +18,7 @@ class EventController extends AbstractController
     {
         $events = $em->getRepository(Event::class)->findBy(['user' => $this->getUser()]);
 
-        $response = $holidays->all();
+        $response = $holidays->all($this->getUser());
 
         foreach ($events as $event) {
             /** @var Event $event */
