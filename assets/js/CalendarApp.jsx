@@ -246,7 +246,6 @@ export default class CalendarApp extends React.Component {
                         eventDrop={this.eventDrop}
                         datesRender={this.datesRender}
                         eventRender={this.eventRender}
-                        eventPositioned={this.eventPositioned}
                     />
                 </div>
                 <div className="col-md-3">
@@ -750,11 +749,8 @@ export default class CalendarApp extends React.Component {
     eventRender = ({event, el}) => {
         let icon = '';
         if (event.extendedProps.info) {
-            icon = '<i style="color:{event.textColor}" class="p-1 float-right far fa-sticky-note"/>';
-        }
-        $(el).find('.fc-title').append(icon);
-        if (event.extendedProps.info) {
             $(".popover").remove();
+            icon = '<i style="color:{event.textColor}" class="p-1 float-right far fa-sticky-note"/>';
             var content = striptags(event.extendedProps.info, ['\n']).replace(new RegExp('\r?\n', 'g'), "<br />");
             $(el).popover({
                 container: 'body',
@@ -765,6 +761,7 @@ export default class CalendarApp extends React.Component {
                 content: content
             });
         }
+        $(el).find('.fc-title').append(icon);
     };
 }
 
