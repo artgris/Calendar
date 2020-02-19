@@ -13,9 +13,8 @@ import 'moment/locale/fr';
 import Sketch from "./Sketch";
 import {DebounceInput} from 'react-debounce-input';
 import Notifications, {notify} from 'react-notify-toast';
-
+import striptags from 'striptags';
 const Alert = withReactContent(Swal);
-
 export function formatDate(date, removeADay) {
     if (date) {
         let momentDate = moment(date);
@@ -244,6 +243,7 @@ export default class CalendarApp extends React.Component {
                         eventResize={this.eventDrop}
                         eventDrop={this.eventDrop}
                         datesRender={this.datesRender}
+                        eventRender={this.eventRender}
                     />
                 </div>
                 <div className="col-md-3">
@@ -422,6 +422,7 @@ export default class CalendarApp extends React.Component {
                             debounceTimeout={300}
                             onChange={(e) => this.updateEventInfo(e, eventClick.event)}
                             className="form-control"
+                            placeholder={"Description"}
                             value={eventClick.event.extendedProps.info}
                         />
                     </div>
@@ -735,11 +736,31 @@ export default class CalendarApp extends React.Component {
     }
 
     displayErrorMessage() {
-        notify.show("Votre session a expiré. Veuillez vous reconnecter", "error", 1500);
+        notify.show("Une erreur est survenue", "error", 1500);
     }
 
     showNotif(message = "Mise à jour enregistrée") {
         notify.show(message, "success", 1500);
+    }
+
+    // ico
+    eventRender = ({ event, el }) => {
+
+        var content = striptags(event.extendedProps.info, ['\n']).replace(new RegExp('\r?\n','g'), "<br />");
+
+        let icon = '';
+        if (event.extendedProps.info) {
+            icon = '<i class="p-1 text-muted float-right far fa-sticky-note"/>';
+            $(el).popover({
+                container: 'body',
+                trigger: 'hover',
+                placement: 'top',
+                html:true,
+                content: content
+            })
+        }
+        $(el).find('.fc-title').append(icon);
+
     }
 }
 
