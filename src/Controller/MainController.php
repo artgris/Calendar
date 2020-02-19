@@ -15,7 +15,8 @@ class MainController extends AbstractController
     public function index(Holidays $holidays)
     {
         return $this->render('main/index.html.twig', [
-            'yasumi_providers' => Yasumi::getProviders() + ['LU' => 'Luxembourg']
+            'yasumi_providers' => Yasumi::getProviders() + ['LU' => 'Luxembourg'],
+            'rand_color'=> '#' . substr(md5(mt_rand()), 0, 6)
         ]);
     }
 }

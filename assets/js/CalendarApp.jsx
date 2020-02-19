@@ -46,7 +46,7 @@ export default class CalendarApp extends React.Component {
             totalCalcul: ''
         },
         errors: [],
-        background: '#' + Math.floor(Math.random() * 16777215).toString(16),
+        background: this.props.background,
         projectName: 'ff'
     };
 
@@ -769,6 +769,7 @@ CalendarApp.propTypes = {
     url: PropTypes.string,
     user: PropTypes.string,
     weekends: PropTypes.string,
+    background: PropTypes.string,
     holiday: PropTypes.string,
     userid: PropTypes.string,
     workinghour: PropTypes.string,
