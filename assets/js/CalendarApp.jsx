@@ -750,7 +750,7 @@ export default class CalendarApp extends React.Component {
 
         let icon = '';
         if (event.extendedProps.info) {
-            icon = '<i class="p-1 text-muted float-right far fa-sticky-note"/>';
+            icon = '<i style="color:{event.textColor}" class="p-1 float-right far fa-sticky-note"/>';
             $(el).popover({
                 container: 'body',
                 trigger: 'hover',
