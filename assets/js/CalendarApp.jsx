@@ -14,7 +14,9 @@ import Sketch from "./Sketch";
 import {DebounceInput} from 'react-debounce-input';
 import Notifications, {notify} from 'react-notify-toast';
 import striptags from 'striptags';
+
 const Alert = withReactContent(Swal);
+
 export function formatDate(date, removeADay) {
     if (date) {
         let momentDate = moment(date);
@@ -244,6 +246,7 @@ export default class CalendarApp extends React.Component {
                         eventDrop={this.eventDrop}
                         datesRender={this.datesRender}
                         eventRender={this.eventRender}
+                        eventPositioned={this.eventPositioned}
                     />
                 </div>
                 <div className="col-md-3">
@@ -268,7 +271,7 @@ export default class CalendarApp extends React.Component {
                     <p><strong>Total calculé : </strong> {this.state.stat.totalCalcul}</p>
                     }
                 </div>
-                <Notifications options={{zIndex: 2000}} />
+                <Notifications options={{zIndex: 2000}}/>
             </div>
         )
     }
@@ -327,9 +330,9 @@ export default class CalendarApp extends React.Component {
                         />
                         <div className="col">
                             <DebounceInput className="form-control mb-1"
-                                   debounceTimeout={300}
-                                   onChange={(e) => this.updateProjectName(e, project.id)}
-                                   value={event.currentTarget.title}/>
+                                           debounceTimeout={300}
+                                           onChange={(e) => this.updateProjectName(e, project.id)}
+                                           value={event.currentTarget.title}/>
                         </div>
                     </div>
                     <div className="row mt-4  text-right">
@@ -459,7 +462,7 @@ export default class CalendarApp extends React.Component {
     // Triggered when dragging stops and the event has moved to a different day/time.
     // quand on deplace ou resize un event
     eventDrop = (eventDropInfo) => {
-
+        $(".popover.fade.top").remove();
         axios({
             url: this.props.url + '/events/' + eventDropInfo.event.id,
             method: 'put',
@@ -744,24 +747,25 @@ export default class CalendarApp extends React.Component {
     }
 
     // ico
-    eventRender = ({ event, el }) => {
-
-        var content = striptags(event.extendedProps.info, ['\n']).replace(new RegExp('\r?\n','g'), "<br />");
-
+    eventRender = ({event, el}) => {
         let icon = '';
         if (event.extendedProps.info) {
             icon = '<i style="color:{event.textColor}" class="p-1 float-right far fa-sticky-note"/>';
+        }
+        $(el).find('.fc-title').append(icon);
+        if (event.extendedProps.info) {
+            $(".popover").remove();
+            var content = striptags(event.extendedProps.info, ['\n']).replace(new RegExp('\r?\n', 'g'), "<br />");
             $(el).popover({
                 container: 'body',
                 trigger: 'hover',
                 placement: 'top',
-                html:true,
+                delay: {show: 200, hide: 100},
+                html: true,
                 content: content
-            })
+            });
         }
-        $(el).find('.fc-title').append(icon);
-
-    }
+    };
 }
 
 CalendarApp.propTypes = {
