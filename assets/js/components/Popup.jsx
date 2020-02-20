@@ -42,7 +42,7 @@ class Popup extends React.Component {
         return (
             <div className='popup'>
                 <div className='popup_inner'>
-                    <h6>Recherche de couleurs depuis un site web</h6>
+                    <h6>Recherche de couleurs</h6>
                     <div className="form-group input-group">
                         <input className="form-control" type="text" onKeyPress={this.keyPressfindColor} value={this.state.url} onChange={this.updateUrl}
                                placeholder="Url ou texte"/>
@@ -75,7 +75,7 @@ class Popup extends React.Component {
             event.preventDefault();
             return false;
         }
-    }
+    };
 
     findColor = () => {
         this.setState({
