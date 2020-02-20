@@ -41,7 +41,7 @@ class MainController extends AbstractController
 
         $img = "{$kernel->getProjectDir()}/public/uploads/{$id}.png";
 
-        Browsershot::url($url)->fullPage()->save($img);
+        Browsershot::url($url)->save($img);
 
         $palette = Palette::fromFilename($img);
         $extractor = new ColorExtractor($palette);
@@ -50,7 +50,7 @@ class MainController extends AbstractController
         foreach ($colors as $toptmp) {
             $tops[] = Color::fromIntToHex($toptmp);
         }
-        unlink($img);
+//        unlink($img);
         return new JsonResponse($tops);
     }
 
