@@ -39,7 +39,7 @@ class MainController extends AbstractController
             $url = 'http://'.$url;
         }
 
-        $img = "{$kernel->getProjectDir()}/public/{$id}.png";
+        $img = "{$kernel->getProjectDir()}/public/uploads/{$id}.png";
 
         Browsershot::url($url)->fullPage()->save($img);
 
