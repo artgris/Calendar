@@ -29,3 +29,4 @@ Supprimerait config/secrets/dev/
 ###< friendsofphp/php-cs-fixer ###
 hosts.php
 deploy.php
+yarn.lock
