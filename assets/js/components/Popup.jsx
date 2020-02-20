@@ -6,6 +6,8 @@ class Popup extends React.Component {
 
     state = {
         showPopup: false,
+        searching: false,
+        error: false,
         colors: [],
         url: 'https://getbootstrap.com/docs/4.4/components/modal/'
     };
@@ -18,6 +20,25 @@ class Popup extends React.Component {
 
 
     render() {
+
+        let button;
+        let error;
+
+        if (this.state.searching) {
+            button = <span><span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"/><span
+                className="sr-only">Loading...</span></span>
+        } else {
+            button = <i className="fas fa-search"/>
+        }
+
+        if (this.state.error) {
+            error = <div className="alert alert-danger" role="alert">
+                {"Ce site n'a pas été trouvé"}
+            </div>
+        } else {
+            error = null;
+        }
+
         return (
             <div className='popup'>
                 <div className='popup_inner'>
@@ -27,17 +48,18 @@ class Popup extends React.Component {
                                placeholder="http://..."/>
                         <div className="input-group-append">
                             <button type="button" className="btn btn-outline-primary" onClick={this.findColor}>
-                                <i className="fas fa-search"/>
+                                {button}
                             </button>
                             <button type="button" className="btn btn-outline-danger" onClick={this.props.closePopup}>
                                 <i className="fas fa-times"/>
                             </button>
                         </div>
                     </div>
+                    {error}
                     <div className={"color-flex"}>
                         {this.state.colors.map(event => (
                             <div key={event} className="color">
-                                <div onClick={this.updateColor} style={{background: event}}></div>
+                                <div onClick={this.updateColor} style={{background: event}}/>
                             </div>
                         ))}
                     </div>
@@ -48,6 +70,10 @@ class Popup extends React.Component {
     }
 
     findColor = () => {
+        this.setState({
+            searching: true,
+            error: false
+        });
         axios({
             url: this.props.url + '/search-color',
             method: 'post',
@@ -56,19 +82,23 @@ class Popup extends React.Component {
             }
         }).then((result) => {
             this.setState({
-                colors: result.data
+                colors: result.data,
+                searching: false
             });
         }).catch(() => {
-            // this.displayErrorMessage()
+            this.setState({
+                searching: false,
+                error: true
+            });
         });
 
     };
 
     updateColor = (event) => {
         this.props.action({hex: event.target.style.background});
-    }
-    
-    
+    };
+
+
     updateUrl(event) {
         this.setState({url: event.target.value})
     }

@@ -32,9 +32,14 @@ class MainController extends AbstractController
      */
     public function color(KernelInterface $kernel, Request $request)
     {
+        $url = $request->query->get('url');
+        if (strpos($url,'http://') === false){
+            $url = 'http://'.$url;
+        }
+
         $img = $kernel->getProjectDir().'/public/image.png';
 
-        Browsershot::url($request->query->get('url'))->fullPage()->save($img);
+        Browsershot::url($url)->fullPage()->save($img);
 
         $palette = Palette::fromFilename($img);
         $extractor = new ColorExtractor($palette);

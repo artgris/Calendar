@@ -325,7 +325,7 @@ export default class CalendarApp extends React.Component {
                 <>
                     <div className="row mt-4">
                         <Sketch
-                            onClose={(e) => this.updateProjectColor(e, project.id)}
+                            onChange={(e) => this.updateProjectColor(e, project.id)}
                             color={project.color}
                             url={this.props.url}
                         />
