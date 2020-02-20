@@ -50,7 +50,7 @@ class MainController extends AbstractController
         foreach ($colors as $toptmp) {
             $tops[] = Color::fromIntToHex($toptmp);
         }
-//        unlink($img);
+        unlink($img);
         return new JsonResponse($tops);
     }
 
