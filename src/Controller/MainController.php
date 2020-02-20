@@ -35,8 +35,9 @@ class MainController extends AbstractController
 
         $id = uniqid(mt_rand(), true);
         $url = $request->query->get('url');
-        if (strpos($url,'http') === false){
-            $url = 'http://'.$url;
+
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            $url = "https://www.google.com/search?q=".urlencode($url);
         }
 
         $img = "{$kernel->getProjectDir()}/public/uploads/{$id}.png";

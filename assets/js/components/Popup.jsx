@@ -44,8 +44,8 @@ class Popup extends React.Component {
                 <div className='popup_inner'>
                     <h6>Recherche de couleurs depuis un site web</h6>
                     <div className="form-group input-group">
-                        <input className="form-control" type="url" value={this.state.url} onChange={this.updateUrl}
-                               placeholder="http://..."/>
+                        <input className="form-control" type="text" onKeyPress={this.keyPressfindColor} value={this.state.url} onChange={this.updateUrl}
+                               placeholder="Url ou texte"/>
                         <div className="input-group-append">
                             <button type="button" className="btn btn-outline-primary" onClick={this.findColor}>
                                 {button}
@@ -67,6 +67,14 @@ class Popup extends React.Component {
                 </div>
             </div>
         );
+    }
+
+    keyPressfindColor = (event) => {
+        if (event.which == 13 || event.keyCode == 13) {
+            this.findColor();
+            event.preventDefault();
+            return false;
+        }
     }
 
     findColor = () => {
