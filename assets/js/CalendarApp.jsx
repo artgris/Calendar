@@ -138,6 +138,7 @@ export default class CalendarApp extends React.Component {
                                         onChange={this.handlePickerChange.bind(this)}
                                         color={this.state.background}
                                         ref={this.sketchComponentRef}
+                                        url={this.props.url}
                                     />
                                     <div className="col">
                                         <div className="form-group input-group">
@@ -326,6 +327,7 @@ export default class CalendarApp extends React.Component {
                         <Sketch
                             onClose={(e) => this.updateProjectColor(e, project.id)}
                             color={project.color}
+                            url={this.props.url}
                         />
                         <div className="col">
                             <DebounceInput className="form-control mb-1"

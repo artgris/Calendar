@@ -34,6 +34,7 @@
         "jquery": "^3.4.1",
         "moment": "^2.24.0",
         "prop-types": "latest",
+        "puppeteer": "^2.1.1",
         "react": "^16.12.0",
         "react-bootstrap": "^1.0.0-beta.16",
         "react-color": "^2.18.0",

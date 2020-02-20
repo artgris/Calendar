@@ -28,7 +28,7 @@
 }
 
 .swal2-actions {
-  z-index: 0!important;
+  z-index: 0 !important;
 }
 
 .fc-event {
@@ -36,6 +36,7 @@
   padding-right: 10px;
   padding-left: 10px;
 }
-.fc-event  div {
+
+.fc-event div {
   border-radius: 3px;
 }

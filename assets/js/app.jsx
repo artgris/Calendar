@@ -1,4 +1,5 @@
 import './../css/app.scss';
+import './components/style.scss';
 import 'bootstrap/js/dist/util'
 import 'bootstrap/js/dist/alert'
 import 'bootstrap/js/dist/dropdown'
