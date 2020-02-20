@@ -32,12 +32,14 @@ class MainController extends AbstractController
      */
     public function color(KernelInterface $kernel, Request $request)
     {
+
+        $id = uniqid(mt_rand(), true);
         $url = $request->query->get('url');
-        if (strpos($url,'http://') === false){
+        if (strpos($url,'http') === false){
             $url = 'http://'.$url;
         }
 
-        $img = $kernel->getProjectDir().'/public/image.png';
+        $img = "{$kernel->getProjectDir()}/public/{$id}.png";
 
         Browsershot::url($url)->fullPage()->save($img);
 

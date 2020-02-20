@@ -9,7 +9,7 @@ class Popup extends React.Component {
         searching: false,
         error: false,
         colors: [],
-        url: 'https://getbootstrap.com/docs/4.4/components/modal/'
+        url: ''
     };
 
 
