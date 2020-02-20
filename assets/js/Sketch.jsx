@@ -92,7 +92,7 @@ export default class Sketch extends React.Component {
                                       onChange={this.handleChange.bind(this)}/>
                     </div> : null}
                     <div className="input-group-append">
-                        <span onClick={this.togglePopup.bind(this)} className="btn btn-outline-primary">
+                        <span onClick={this.togglePopup.bind(this)} className="btn btn-outline-secondary">
                             <i className="fas fa-search"/>
                         </span>
                     </div>
