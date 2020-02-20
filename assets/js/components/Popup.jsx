@@ -70,7 +70,7 @@ class Popup extends React.Component {
     }
 
     keyPressfindColor = (event) => {
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which === 13 || event.keyCode === 13) {
             this.findColor();
             event.preventDefault();
             return false;

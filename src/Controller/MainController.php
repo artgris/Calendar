@@ -37,7 +37,7 @@ class MainController extends AbstractController
         $url = $request->query->get('url');
 
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            $url = "https://www.google.com/search?q=".urlencode($url);
+            $url = "https://www.google.com/search?tbm=isch&q=".urlencode($url);
         }
 
         $img = "{$kernel->getProjectDir()}/public/uploads/{$id}.png";
