@@ -255,17 +255,17 @@ export default class CalendarApp extends React.Component {
                             <strong>Récapitulatif du mois</strong>
                         </p>
                     </div>
-                    <ul>
+                    <div>
                         {Object.keys(this.state.stat.projects).map(key => (
-                            <li key={key}>{this.state.stat.projects[key].hours}
-                                <ul>
-                                    {this.state.stat.projects[key].list.map(info => (
-                                        <li key={key + info}>{info}</li>
-                                    ))}
-                                </ul>
-                            </li>
+                            <div key={key}>
+                                - {this.state.stat.projects[key].hours}
+                                {this.state.stat.projects[key].list.map(info => (
+                                    <div key={key + info}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⤷ {info}</div>
+                                ))}
+                            </div>
                         ))}
-                    </ul>
+                    </div>
+                    <br/>
                     <p><strong>Total : </strong> {this.state.stat.total}</p>
                     {this.state.stat.totalCalcul !== null &&
                     <p><strong>Total calculé : </strong> {this.state.stat.totalCalcul}</p>
