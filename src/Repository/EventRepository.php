@@ -115,7 +115,7 @@ class EventRepository extends ServiceEntityRepository
         foreach ($stat as &$st) {
             $listTmp = [];
             foreach ($st['list'] as $key => $list) {
-                $duration = $this->convertHoursToMinutes($list['duration']);
+                $duration = $this->formatDays($list['duration'], $user);
                 $listTmp[] = $list['info']." ({$duration})";
             }
             $st['list'] = $listTmp;
