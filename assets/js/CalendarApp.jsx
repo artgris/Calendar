@@ -782,6 +782,7 @@ export default class CalendarApp extends React.Component {
         $("body").append($temp);
         $temp.val(this.stripHtml($(element).html().replace( /<br\s*[\/]?>/gi, "\r\n"))).select();
         document.execCommand("copy");
+        $temp.remove();
         this.showNotif("Récapitulatif copié dans le presse-papier")
     }
 
