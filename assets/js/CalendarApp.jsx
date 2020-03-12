@@ -755,7 +755,7 @@ export default class CalendarApp extends React.Component {
         let icon = '';
         if (event.extendedProps.info) {
             $(".popover").remove();
-            icon = '<i style="color:{event.textColor}" class="p-1 float-right far fa-sticky-note"/>';
+            icon = '<i style="color:'+event.textColor+'" class="p-1 float-right far fa-comment"/>';
             var content = striptags(event.extendedProps.info, ['\n']).replace(new RegExp('\r?\n', 'g'), "<br />");
             $(el).popover({
                 container: 'body',
