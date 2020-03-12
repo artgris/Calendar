@@ -165,6 +165,7 @@ class Event
         $this->hours = $hours;
     }
 
+    // nombre de jour de l'evenemnt
     public function countDay(User $user)
     {
         if ($this->end) {
@@ -183,6 +184,7 @@ class Event
         return 1;
     }
 
+    // durée en heure de l'evenement par jour
     public function hoursByDay(User $user)
     {
         return $this->hours / $this->countDay($user);
