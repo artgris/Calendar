@@ -59,13 +59,16 @@ export default class CalendarApp extends React.Component {
         this.updateWeekendsCheckbox = this.updateWeekendsCheckbox.bind(this);
         this.updateWorkingHour = this.updateWorkingHour.bind(this);
         this.updateHoliday = this.updateHoliday.bind(this);
+        this.copyToClipboard = this.copyToClipboard.bind(this);
     }
 
     render() {
+
         const hasProject = this.state.events.length > 0;
         const holidayOptions = Object.keys(window.YASUMI_PROVIDERS).map(key =>
             <option key={key} value={key}>{window.YASUMI_PROVIDERS[key]}</option>
         );
+
         return (
             <div className='mt-2 row'>
                 <div className="col-md-3">
@@ -252,17 +255,17 @@ export default class CalendarApp extends React.Component {
                 <div className="col-md-3">
                     <div className="col-12">
                         <p className="text-center">
-                            <strong>Récapitulatif du mois</strong>
+                            <strong>Récapitulatif du mois <button onClick={this.copyToClipboard} id="copy-to-clipboard" data-toggle="tooltip" data-placement="left" title="Copier dans le presse papier" className='btn'> <i className="far fa-copy"/> </button> </strong>
                         </p>
                     </div>
-                    <div>
+                    <div id="stat-text">
                         {Object.keys(this.state.stat.projects).map(key => (
-                            <div key={key}>
-                                - {this.state.stat.projects[key].hours}
+                            <span key={key}>
+                                - {this.state.stat.projects[key].hours}  <br/>
                                 {this.state.stat.projects[key].list.map(info => (
-                                    <div key={key + info}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⤷ {info}</div>
+                                    <span key={key + info}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⤷ {info} <br/></span>
                                 ))}
-                            </div>
+                            </span>
                         ))}
                     </div>
                     <br/>
@@ -765,6 +768,23 @@ export default class CalendarApp extends React.Component {
         }
         $(el).find('.fc-title').append(icon);
     };
+
+
+    stripHtml(html) {
+        var tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+    }
+
+    copyToClipboard() {
+        var element = $("#stat-text");
+        var $temp = $("<textarea>");
+        $("body").append($temp);
+        $temp.val(this.stripHtml($(element).html().replace( /<br\s*[\/]?>/gi, "\r\n"))).select();
+        document.execCommand("copy");
+        this.showNotif("Récapitulatif copié dans le presse-papier")
+    }
+
 }
 
 CalendarApp.propTypes = {
