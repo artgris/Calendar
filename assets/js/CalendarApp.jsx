@@ -367,7 +367,7 @@ export default class CalendarApp extends React.Component {
                         <input
                             className="form-control"
                             type="number"
-                            min="1"
+                            min="0"
                             onChange={(e) => this.updateEventHours(e, eventClick.event)}
                             defaultValue={eventClick.event.extendedProps.hours}
                         />
