@@ -75,26 +75,52 @@ class EventRepository extends ServiceEntityRepository
         foreach ($dateSaved as $eventsTmp) {
             $div = 0;
             $hours = 0;
+
+            // premier parcours des events du jour pour determiner le nombre d'heure des events
             foreach ($eventsTmp as $eventTmpp) {
                 /** @var Event $eventTmpp */
                 if ($eventTmpp->getHours() === null) {
                     $div++;
+                    // si il n'y a pas de durée d'heure sur l'evenement, on augment le div pour divisé les events sans heure
                 } else {
+                    // nombre d'heur de l'evenement par jour
                     $hours += $eventTmpp->hoursByDay($user);
                 }
             }
 
             foreach ($eventsTmp as $eventTmp) {
                 if (!isset($stat[$eventTmp->getProject()->getTitle()])) {
-                    $stat[$eventTmp->getProject()->getTitle()] = 0;
+                    $stat[$eventTmp->getProject()->getTitle()] = ['hours' => 0, 'list' => []];
                 }
                 if ($hours > $user->getWorkingHour()) {
                     $hours = $user->getWorkingHour();
                 }
                 // en heures
-                $stat[$eventTmp->getProject()->getTitle()] += $eventTmp->getHours() ? $eventTmp->hoursByDay($user) : ($user->getWorkingHour() - $hours) / $div;
+                //pour chaque event avec heure, on ajoute le nombre d'heure par jour de l'event sinon, on calcul le nombre d'heure restantes et on divise par le nombre d'event sans heure
+                $currentDuration = $eventTmp->getHours() ? $eventTmp->hoursByDay($user) : ($user->getWorkingHour() - $hours) / $div;
+                $stat[$eventTmp->getProject()->getTitle()]['hours'] += $currentDuration;
+
+                if ($eventTmp->getInfo()) {
+
+                    if (!isset($stat[$eventTmp->getProject()->getTitle()]['list'][$eventTmp->getId()]['duration'])) {
+                        $stat[$eventTmp->getProject()->getTitle()]['list'][$eventTmp->getId()]['duration'] = $currentDuration;
+                        $duration = $currentDuration;
+                    } else {
+                        $duration = $stat[$eventTmp->getProject()->getTitle()]['list'][$eventTmp->getId()]['duration'] + $currentDuration;
+                    }
+                    $stat[$eventTmp->getProject()->getTitle()]['list'][$eventTmp->getId()] = ['duration' => $duration, 'info' => $eventTmp->getInfo()];
+                }
             }
         }
+        foreach ($stat as &$st) {
+            $listTmp = [];
+            foreach ($st['list'] as $key => $list) {
+                $duration = $this->formatDays($list['duration'], $user);
+                $listTmp[] = $list['info']." ({$duration})";
+            }
+            $st['list'] = $listTmp;
+        }
+
         return $stat;
     }
 
@@ -103,10 +129,15 @@ class EventRepository extends ServiceEntityRepository
         $stat = $this->getStatArray($user, $date);
         $statArray = [];
         $total = 0;
+
+        uasort($stat, function ($a, $b) {
+            return ($a['hours'] < $b['hours']);
+        });
+
         foreach ($stat as $key => $value) {
-            $total += $value;
-            $valueFormat = $this->formatDays($value, $user);
-            $statArray[] = $key.': '.$valueFormat;
+            $total += $value['hours'];
+            $valueFormat = $this->formatDays($value['hours'], $user);
+            $statArray[$key] = ['hours' => $key.' : '.$valueFormat, 'list' => $value['list']];
         }
         return [
             'total' => $this->formatDays($total, $user),

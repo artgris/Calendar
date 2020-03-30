@@ -1,0 +1,29 @@
+.popup {
+  position: absolute;
+  z-index: 666;
+}
+
+.popup_inner {
+  width: 305px;
+  padding: 10px 10px 10px;
+  box-sizing: initial;
+  background: rgb(255, 255, 255);
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.15) 0px 8px 16px;
+}
+.color-flex {
+  margin: 0px -10px; padding: 10px 0px 0px 10px; border-top: 1px solid rgb(238, 238, 238); display: flex; flex-wrap: wrap; position: relative;
+}
+
+div.color {
+  width: 16px; height: 16px; margin: 0px 10px 10px 0px;
+}
+div.color div {
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  border-radius: 3px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
+}

@@ -11,6 +11,9 @@ import * as axios from "axios";
 import moment from "moment";
 import 'moment/locale/fr';
 import Sketch from "./Sketch";
+import {DebounceInput} from 'react-debounce-input';
+import Notifications, {notify} from 'react-notify-toast';
+import striptags from 'striptags';
 
 const Alert = withReactContent(Swal);
 
@@ -31,18 +34,19 @@ export default class CalendarApp extends React.Component {
     sketchComponentRef = React.createRef();
     state = {
         weekends: this.props.weekends,
+        holiday: this.props.holiday,
         workinghour: this.props.workinghour,
         displayArchived: false,
         calendarEvents: [],
         events: [],
         value: '',
         stat: {
-            projects: [],
+            projects: {},
             total: '',
             totalCalcul: ''
         },
         errors: [],
-        background: '#' + Math.floor(Math.random() * 16777215).toString(16),
+        background: this.props.background,
         projectName: 'ff'
     };
 
@@ -54,10 +58,17 @@ export default class CalendarApp extends React.Component {
         this.updateProjectCheckbox = this.updateProjectCheckbox.bind(this);
         this.updateWeekendsCheckbox = this.updateWeekendsCheckbox.bind(this);
         this.updateWorkingHour = this.updateWorkingHour.bind(this);
+        this.updateHoliday = this.updateHoliday.bind(this);
+        this.copyToClipboard = this.copyToClipboard.bind(this);
     }
 
     render() {
+
         const hasProject = this.state.events.length > 0;
+        const holidayOptions = Object.keys(window.YASUMI_PROVIDERS).map(key =>
+            <option key={key} value={key}>{window.YASUMI_PROVIDERS[key]}</option>
+        );
+
         return (
             <div className='mt-2 row'>
                 <div className="col-md-3">
@@ -90,12 +101,13 @@ export default class CalendarApp extends React.Component {
                                     onClick={this.projectClick}
                                     className={this.state.displayArchived === false && event.archived ? 'd-none' : 'fc-event col-md-6 mb-2'}
                                     title={event.title}
-                                    data-color={event.color}
+                                    data-color={event.backgroundColor}
                                     data-id={event.id}
                                     data-archived={event.archived}
                                     key={event.id}
                                 >
-                                    <div className="col"      style={{backgroundColor: event.color, color: event.textColor}}>
+                                    <div className="col"
+                                         style={{backgroundColor: event.backgroundColor, color: event.textColor}}>
                                         {event.title} {event.archived ? '(archivé)' : ''}
                                     </div>
                                 </div>
@@ -109,7 +121,7 @@ export default class CalendarApp extends React.Component {
 
                     <div className="row p-2">
                         <div className="col-12">
-                            <p className="text-center">
+                            <p>
                                 <strong>Ajouter un Projet</strong>
                             </p>
                         </div>
@@ -129,35 +141,39 @@ export default class CalendarApp extends React.Component {
                                         onChange={this.handlePickerChange.bind(this)}
                                         color={this.state.background}
                                         ref={this.sketchComponentRef}
+                                        url={this.props.url}
                                     />
                                     <div className="col">
-                                        <input className="form-control mb-1" placeholder="Nom du Projet"
-                                               value={this.state.value}
-                                               required
-                                               onChange={this.handleProjectNameChange}
-                                               type="text"/>
+                                        <div className="form-group input-group">
+                                            <input className="form-control" placeholder="Nom du Projet"
+                                                   value={this.state.value}
+                                                   required
+                                                   onChange={this.handleProjectNameChange}
+                                                   type="text"/>
+                                            <div className="input-group-append">
+                                                <button type="submit" className="btn btn-outline-primary">
+                                                    <i className="fas fa-plus"/>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
                                 <input className="form-control"
                                        value={this.state.background}
                                        type="hidden"/>
 
                             </div>
-                            <button type="submit" className="btn btn-sm btn-outline-primary">
-                                <i className="fas fa-plus-circle"/> Ajouter le Projet
-                            </button>
                         </form>
                     </div>
                     <hr/>
                     <div className="row p-2">
                         <div className="col-12">
-                            <p className="text-center">
+                            <p>
                                 <strong>Paramétrage du calendrier</strong>
                             </p>
                         </div>
                         <div className="row p-2">
-                            <div className="col-12 mb-2">
+                            <div className="col-12 mb-3">
                                 <div className="custom-control custom-checkbox">
                                     <input type="checkbox"
                                            defaultChecked={this.state.weekends === '1'}
@@ -172,10 +188,10 @@ export default class CalendarApp extends React.Component {
                             </div>
                             <div className="col-12">
                                 <div className="row form-group">
-                                    <label htmlFor="update-working" className="col-6 col-form-label">
+                                    <label htmlFor="update-working" className="col-5 col-form-label">
                                         Journée de travail
                                     </label>
-                                    <div className="col-5 input-group ">
+                                    <div className="col-7 input-group ">
                                         <input id="update-working"
                                                className="form-control"
                                                value={this.state.workinghour}
@@ -188,6 +204,25 @@ export default class CalendarApp extends React.Component {
                                     </div>
                                 </div>
                             </div>
+                            <div className="col-12">
+                                <div className="row form-group">
+                                    <label htmlFor="select-holiday" className="col-5 col-form-label">
+                                        Jours fériés
+                                    </label>
+                                    <div className="col-7">
+                                        <select id="select-holiday"
+                                                value={this.state.holiday}
+                                                onChange={this.updateHoliday}
+                                                className="form-control"
+                                        >
+                                            <option/>
+                                            {holidayOptions}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -214,25 +249,32 @@ export default class CalendarApp extends React.Component {
                         eventResize={this.eventDrop}
                         eventDrop={this.eventDrop}
                         datesRender={this.datesRender}
+                        eventRender={this.eventRender}
                     />
                 </div>
                 <div className="col-md-3">
                     <div className="col-12">
                         <p className="text-center">
-                            <strong>Récapitulatif du mois</strong>
+                            <strong>Récapitulatif du mois <button onClick={this.copyToClipboard} id="copy-to-clipboard" data-toggle="tooltip" data-placement="left" title="Copier dans le presse papier" className='btn'> <i className="far fa-copy"/> </button> </strong>
                         </p>
                     </div>
-
-                    <ul>
-                        {this.state.stat.projects.map(event => (
-                            <li key={event + 'Stat'}>{event}</li>
+                    <div id="stat-text">
+                        {Object.keys(this.state.stat.projects).map(key => (
+                            <span key={key}>
+                                - {this.state.stat.projects[key].hours}  <br/>
+                                {this.state.stat.projects[key].list.map(info => (
+                                    <span key={key + info}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⤷ {info} <br/></span>
+                                ))}
+                            </span>
                         ))}
-                    </ul>
+                    </div>
+                    <br/>
                     <p><strong>Total : </strong> {this.state.stat.total}</p>
                     {this.state.stat.totalCalcul !== null &&
                     <p><strong>Total calculé : </strong> {this.state.stat.totalCalcul}</p>
                     }
                 </div>
+                <Notifications options={{zIndex: 2000}}/>
             </div>
         )
     }
@@ -269,7 +311,9 @@ export default class CalendarApp extends React.Component {
             this.setState({
                 calendarEvents: resultdata.data
             });
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     };
 
     // au click sur le projet
@@ -284,14 +328,15 @@ export default class CalendarApp extends React.Component {
                 <>
                     <div className="row mt-4">
                         <Sketch
-                            onClose={(e) => this.updateProjectColor(e, project.id)}
+                            onChange={(e) => this.updateProjectColor(e, project.id)}
                             color={project.color}
+                            url={this.props.url}
                         />
                         <div className="col">
-                            <input className="form-control mb-1"
-                                   type="text"
-                                   onChange={(e) => this.updateProjectName(e, project.id)}
-                                   defaultValue={event.currentTarget.title}/>
+                            <DebounceInput className="form-control mb-1"
+                                           debounceTimeout={300}
+                                           onChange={(e) => this.updateProjectName(e, project.id)}
+                                           value={event.currentTarget.title}/>
                         </div>
                     </div>
                     <div className="row mt-4  text-right">
@@ -313,7 +358,7 @@ export default class CalendarApp extends React.Component {
             ,
             confirmButtonColor: "#d33",
             confirmButtonText: "Supprimer",
-            cancelButtonText: "Annuler",
+            cancelButtonText: "Fermer",
             allowEscapeKey: false,
             allowEnterKey: false,
         }).then(result => {
@@ -324,6 +369,7 @@ export default class CalendarApp extends React.Component {
                     url: this.props.url + '/projects/' + key,
                     method: 'delete',
                 }).then(() => {
+                    this.showNotif("Projet supprimé");
                     this.setState({
                         events: this.state.events.filter(function (event) {
                             return event.id !== parseInt(key)
@@ -337,8 +383,8 @@ export default class CalendarApp extends React.Component {
                     this.datesRender();
                 });
             }
-        }).catch((error) => {
-            alert(error.message)
+        }).catch(() => {
+            this.displayErrorMessage()
         })
     };
 
@@ -376,6 +422,18 @@ export default class CalendarApp extends React.Component {
                         </div>
                     </div>
                 </div>
+                <div className="row mt-4 justify-content-center">
+                    <div className="input-group col-8 mb-1">
+                        <DebounceInput
+                            element="textarea"
+                            debounceTimeout={300}
+                            onChange={(e) => this.updateEventInfo(e, eventClick.event)}
+                            className="form-control"
+                            placeholder={"Description"}
+                            value={eventClick.event.extendedProps.info}
+                        />
+                    </div>
+                </div>
                 <p className="mt-4">
                     {endDate ? startDate + ' au ' + endDate : startDate}
                 </p>
@@ -383,13 +441,14 @@ export default class CalendarApp extends React.Component {
             showCancelButton: true,
             confirmButtonColor: "#d33",
             confirmButtonText: "Supprimer",
-            cancelButtonText: "Annuler",
+            cancelButtonText: "Fermer",
         }).then(result => {
             if (result.value) {
                 axios({
                     url: this.props.url + '/events/' + eventClick.event.id,
                     method: 'delete',
                 }).then(() => {
+                    this.showNotif("Événement supprimé");
                     eventClick.event.remove();
                     this.setState({
                         calendarEvents: this.state.calendarEvents.filter(function (event) {
@@ -399,13 +458,15 @@ export default class CalendarApp extends React.Component {
                     this.datesRender();
                 });
             }
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     };
 
     // Triggered when dragging stops and the event has moved to a different day/time.
     // quand on deplace ou resize un event
     eventDrop = (eventDropInfo) => {
-
+        $(".popover.fade.top").remove();
         axios({
             url: this.props.url + '/events/' + eventDropInfo.event.id,
             method: 'put',
@@ -414,6 +475,7 @@ export default class CalendarApp extends React.Component {
                 "end": eventDropInfo.event.end ? moment(eventDropInfo.event.end).format("YYYY-MM-DD") : null,
             }
         }).then((result) => {
+            this.showNotif("Événement modifié");
             let key = parseInt(eventDropInfo.event.id);
             this.setState(prevState => ({
                 calendarEvents: prevState.calendarEvents.map(
@@ -421,7 +483,11 @@ export default class CalendarApp extends React.Component {
                 )
             }));
             this.datesRender();
+
+        }).catch(() => {
+            this.displayErrorMessage()
         })
+
     };
 
 
@@ -437,11 +503,15 @@ export default class CalendarApp extends React.Component {
                 "project": this.props.url + '/projects/' + value.draggedEl.getAttribute("data-id")
             }
         }).then((result) => {
+            this.showNotif("Événement ajouté");
             this.setState({
                 calendarEvents: [...this.state.calendarEvents, result.data]
             });
             this.datesRender();
-        });
+
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     };
 
     // Called when an external draggable element with associated event data was dropped onto the calendar.
@@ -475,6 +545,7 @@ export default class CalendarApp extends React.Component {
                 "color": this.state.background
             }
         }).then((result) => {
+            this.showNotif("Projet ajouté");
             this.setState({
                 events: [...this.state.events, result.data],
                 value: '',
@@ -482,38 +553,14 @@ export default class CalendarApp extends React.Component {
             });
 
         }).catch((error) => {
-
             if (error.response.data.violations) {
                 this.setState({
                     errors: error.response.data.violations
                 })
             } else {
-                alert(error.message)
+                this.displayErrorMessage()
             }
         })
-    };
-
-    // supprimer un projet
-    removeProject = (event) => {
-        event.preventDefault();
-        const key = event.target[0].value;
-        const url = this.props.url;
-        axios({
-            url: this.props.url + '/projects/' + key,
-            method: 'delete',
-        }).then(() => {
-            this.setState({
-                events: this.state.events.filter(function (event) {
-                    return event.id !== parseInt(key)
-                })
-            });
-            this.setState({
-                calendarEvents: this.state.calendarEvents.filter(function (event) {
-                    return event.project !== url + '/projects/' + parseInt(key)
-                })
-            });
-            this.datesRender();
-        });
     };
 
     // changement de nom de projet dans le form Projet
@@ -529,9 +576,12 @@ export default class CalendarApp extends React.Component {
                 "color": color,
             }
         }).then(() => {
+            this.showNotif("Projet modifié");
             this.updateProject();
             this.updateEvent();
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     }
 
     updateProjectName(event, id) {
@@ -542,6 +592,7 @@ export default class CalendarApp extends React.Component {
                 "title": event.target.value,
             }
         }).then((result) => {
+            this.showNotif("Projet renommé");
             this.updateEvent();
             this.datesRender();
             this.setState(prevState => ({
@@ -549,7 +600,9 @@ export default class CalendarApp extends React.Component {
                     el => el.id === parseInt(id) ? {...el, title: result.data.title} : el
                 )
             }));
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
 
     }
 
@@ -561,8 +614,11 @@ export default class CalendarApp extends React.Component {
                 "archived": event.target.checked,
             }
         }).then(() => {
+            this.showNotif("Projet modifié");
             this.updateProject();
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
 
     }
 
@@ -587,7 +643,9 @@ export default class CalendarApp extends React.Component {
             this.setState({
                 stat: result.data
             });
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     };
 
     updateProject() {
@@ -598,7 +656,9 @@ export default class CalendarApp extends React.Component {
             this.setState({
                 events: resultdata.data['hydra:member']
             });
-        });
+        }).catch(() => {
+            this.displayErrorMessage()
+        })
     }
 
     updateEventHours(e, event) {
@@ -609,6 +669,21 @@ export default class CalendarApp extends React.Component {
                 "hours": parseFloat(e.target.value),
             }
         }).then(() => {
+            this.showNotif("Événement modifié");
+            this.datesRender();
+            this.updateEvent();
+        })
+    }
+
+    updateEventInfo(e, event) {
+        axios({
+            url: this.props.url + '/events/' + event.id,
+            method: 'put',
+            data: {
+                "info": e.target.value,
+            }
+        }).then(() => {
+            this.showNotif("Événement modifié");
             this.datesRender();
             this.updateEvent();
         })
@@ -628,13 +703,13 @@ export default class CalendarApp extends React.Component {
                 "weekends": e.target.checked,
             }
         }).then((result) => {
+            this.showNotif("Calendrier modifié");
             this.updateStat();
             this.calendarComponentRef.current.calendar.setOption('weekends', result.data.weekends)
         });
     }
 
     updateWorkingHour(event) {
-        console.log(event.target.value)
         axios({
             url: this.props.url + '/users/' + this.props.userid,
             method: 'put',
@@ -642,19 +717,83 @@ export default class CalendarApp extends React.Component {
                 "workingHour": parseInt(event.target.value),
             }
         }).then((result) => {
-            console.log(result.data.workingHour)
+            this.showNotif("Calendrier modifié");
             this.setState({
                 workinghour: result.data.workingHour
             });
             this.updateStat();
         });
     }
+
+    updateHoliday(event) {
+        axios({
+            url: this.props.url + '/users/' + this.props.userid,
+            method: 'put',
+            data: {
+                "holiday": event.target.value,
+            }
+        }).then((result) => {
+            this.showNotif("Calendrier modifié");
+            this.setState({
+                holiday: result.data.holiday
+            });
+            this.updateEvent();
+            this.updateStat();
+        });
+    }
+
+    displayErrorMessage() {
+        notify.show("Une erreur est survenue", "error", 1500);
+    }
+
+    showNotif(message = "Mise à jour enregistrée") {
+        notify.show(message, "success", 1500);
+    }
+
+    // ico
+    eventRender = ({event, el}) => {
+        let icon = '';
+        if (event.extendedProps.info) {
+            $(".popover").remove();
+            icon = '<i style="color:'+event.textColor+'" class="p-1 float-right far fa-sticky-note"/>';
+            var content = striptags(event.extendedProps.info, ['\n']).replace(new RegExp('\r?\n', 'g'), "<br />");
+            $(el).popover({
+                container: 'body',
+                trigger: 'hover',
+                placement: 'top',
+                delay: {show: 200, hide: 100},
+                html: true,
+                content: content
+            });
+        }
+        $(el).find('.fc-title').append(icon);
+    };
+
+
+    stripHtml(html) {
+        var tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+    }
+
+    copyToClipboard() {
+        var element = $("#stat-text");
+        var $temp = $("<textarea>");
+        $("body").append($temp);
+        $temp.val(this.stripHtml($(element).html().replace( /<br\s*[\/]?>/gi, "\r\n"))).select();
+        document.execCommand("copy");
+        $temp.remove();
+        this.showNotif("Récapitulatif copié dans le presse-papier")
+    }
+
 }
 
 CalendarApp.propTypes = {
     url: PropTypes.string,
     user: PropTypes.string,
     weekends: PropTypes.string,
+    background: PropTypes.string,
+    holiday: PropTypes.string,
     userid: PropTypes.string,
     workinghour: PropTypes.string,
 };

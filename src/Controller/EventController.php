@@ -18,7 +18,7 @@ class EventController extends AbstractController
     {
         $events = $em->getRepository(Event::class)->findBy(['user' => $this->getUser()]);
 
-        $response = $holidays->all();
+        $response = $holidays->all($this->getUser());
 
         foreach ($events as $event) {
             /** @var Event $event */
@@ -28,6 +28,7 @@ class EventController extends AbstractController
                 'textColor' => $event->getTextColor(),
                 'title' => $event->getTitle(),
                 'hours' => $event->getHours(),
+                'info' => $event->getInfo(),
                 'projectName' => $event->getProjectName(),
                 'allDay' => true,
                 'start' => $event->getStart()->format('Y-m-d\TH:i:sP'),

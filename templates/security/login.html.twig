@@ -11,7 +11,7 @@
 {% block body %}
     <div class="form-auth">
         <form method="post">
-            <img class="mb-4" src="{{ asset('favicon.ico') }}" alt="" width="72" height="72">
+            <img class="mb-4" src="{{ asset('logo.svg') }}" alt="" width="72" height="72">
             <h1 class="h3 mb-3 font-weight-normal">Se connecter à Calendar</h1>
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>

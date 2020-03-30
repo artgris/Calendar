@@ -68,6 +68,11 @@ class Project
     public $textColor;
 
     /**
+     * @ApiProperty
+     */
+    public $backgroundColor;
+
+    /**
      * @var bool
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -139,6 +144,13 @@ class Project
 
         return $this;
     }
+
+
+    public function getBackgroundColor()
+    {
+        return !empty($this->color) ? $this->color : '#000';
+    }
+
 
     public function getTextColor()
     {

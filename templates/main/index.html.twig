@@ -6,11 +6,17 @@
          data-user="{{ path('api_entrypoint') }}/users/{{ app.user.id }}"
          data-userid="{{ app.user.id }}"
          data-weekends="{{ app.user.weekends }}"
+         data-holiday="{{ app.user.holiday }}"
          data-workinghour="{{ app.user.workingHour }}"
+         data-background="{{ rand_color }}"
     ></div>
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        window.YASUMI_PROVIDERS = {{ yasumi_providers|json_encode|raw }}
+    </script>
     {{ parent() }}
     {{ encore_entry_script_tags('calendar') }}
+
 {% endblock %}
