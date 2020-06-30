@@ -47,6 +47,8 @@ export default class CalendarApp extends React.Component {
         },
         errors: [],
         background: this.props.background,
+        latitude: this.props.latitude,
+        longitude: this.props.longitude,
         projectName: 'ff'
     };
 
@@ -59,7 +61,9 @@ export default class CalendarApp extends React.Component {
         this.updateWeekendsCheckbox = this.updateWeekendsCheckbox.bind(this);
         this.updateWorkingHour = this.updateWorkingHour.bind(this);
         this.updateHoliday = this.updateHoliday.bind(this);
+        this.getLocation = this.getLocation.bind(this);
         this.copyToClipboard = this.copyToClipboard.bind(this);
+        this.updateWeather = this.updateWeather.bind(this);
     }
 
     render() {
@@ -221,8 +225,44 @@ export default class CalendarApp extends React.Component {
                                     </div>
                                 </div>
                             </div>
-
-
+                            <div className="col-12">
+                                <div className="row form-group">
+                                    <label htmlFor="select-weather" className="col-5 col-form-label">
+                                        Météo
+                                    </label>
+                                    <div className="col-7 ">
+                                        <div className="input-group">
+                                            <input id="update-latitude"
+                                                   className="form-control"
+                                                   value={this.state.latitude}
+                                                   required
+                                                   readOnly
+                                                   onChange={this.updateWeather}
+                                                   type="text"/>
+                                            <div className="input-group-append">
+                                                <span className="input-group-text">Lat</span>
+                                            </div>
+                                        </div>
+                                        <div className="input-group mt-2">
+                                            <input id="update-longitude"
+                                                   className="form-control"
+                                                   value={this.state.longitude}
+                                                   required
+                                                   readOnly
+                                                   onChange={this.updateWeather}
+                                                   type="text"/>
+                                            <div className="input-group-append">
+                                                <span className="input-group-text">Lng</span>
+                                            </div>
+                                        </div>
+                                        <div className="input-group mt-2">
+                                            <button className={"btn btn-sm btn-primary"} onClick={this.getLocation}>
+                                                Utilisez ma localisation <i className={"fas fa-map-marker"}></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -742,6 +782,39 @@ export default class CalendarApp extends React.Component {
         });
     }
 
+    updateWeather(event) {
+
+        var value = event.target.value;
+        var data = event.target.id === 'update-latitude' ? {'latitude':value} : {'longitude':value};
+        this.updateWeatherApi(data);
+    }
+
+    updateWeatherApi (data) {
+        axios({
+            url: this.props.url + '/users/' + this.props.userid,
+            method: 'put',
+            data: data
+        }).then((result) => {
+            // this.showNotif("Météo modifiée");
+            this.setState({
+                latitude : result.data.latitude,
+                longitude : result.data.longitude,
+            });
+        });
+
+        axios({
+            url: this.props.url + '/weather/',
+            method: 'get',
+        }).then((result) => {
+            this.showNotif("Météo modifiée");
+
+            console.log(result.data);
+
+        });
+
+
+    }
+
     displayErrorMessage() {
         notify.show("Une erreur est survenue", "error", 1500);
     }
@@ -784,6 +857,27 @@ export default class CalendarApp extends React.Component {
         document.execCommand("copy");
         $temp.remove();
         this.showNotif("Récapitulatif copié dans le presse-papier")
+    }
+
+    getLocation(event) {
+        if (navigator.geolocation) {
+            let latitude = 0;
+            let longitude = 0;
+            let success = position => {
+                latitude = position.coords.latitude.toString();
+                longitude = position.coords.longitude.toString();
+                this.setState(
+                    {
+                        latitude: latitude,
+                        longitude: longitude
+                    }
+                );
+                this.updateWeatherApi({'latitude':latitude, 'longitude': longitude});
+            };
+            navigator.geolocation.getCurrentPosition(success);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
     }
 
 }

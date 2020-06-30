@@ -80,6 +80,20 @@ class User implements UserInterface
      */
     private $workingHour = 8;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="decimal", precision=20, scale=16, nullable=true)
+     */
+    private $latitude;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="decimal", precision=20, scale=16, nullable=true)
+     */
+    private $longitude;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -254,6 +268,26 @@ class User implements UserInterface
     public function setHoliday(?string $holiday): void
     {
         $this->holiday = $holiday;
+    }
+
+    public function getLatitude(): ?string
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?string $latitude): void
+    {
+        $this->latitude = $latitude;
+    }
+
+    public function getLongitude(): ?string
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?string $longitude): void
+    {
+        $this->longitude = $longitude;
     }
 
 }
