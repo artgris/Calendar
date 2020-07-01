@@ -233,12 +233,12 @@ export default class CalendarApp extends React.Component {
                                     </label>
                                     <div className="col-7 ">
                                         <div className="input-group mt-2">
-                                            <button className={"btn btn-sm btn-primary"} onClick={this.getLocation}>
-                                                Utilisez ma localisation <i className={"fas fa-map-marker"}></i>
+                                            <button className={"btn btn-sm btn-outline-primary"} onClick={this.getLocation}>
+                                                Utilisez ma localisation <i className={"fa fa-map-marker-alt"}/>
                                             </button>
 
-                                            <button className={"ml-2 btn btn-sm btn-danger"} onClick={this.removeLocation} >
-                                                <i className={"fas fa-trash"}></i>
+                                            <button className={"ml-2 btn btn-sm btn-outline-danger"} onClick={this.removeLocation} >
+                                                <i className={"fa fa-trash-alt"}/>
                                             </button>
 
                                         </div>
@@ -863,9 +863,14 @@ export default class CalendarApp extends React.Component {
                 );
                 this.updateWeatherApi({'latitude':latitude, 'longitude': longitude}, true);
             };
-            navigator.geolocation.getCurrentPosition(success);
+
+            let error = () => {
+               alert("Vous avez bloqué le suivi de votre position géographique sur cette page. Veuillez l'activer pour pouvoir utiliser la météo.");
+            }
+
+            navigator.geolocation.getCurrentPosition(success, error);
         } else {
-            alert("Geolocation is not supported by this browser.");
+            alert("Geolocation n'est pas supporté par votre navigateur.");
         }
     }
 
