@@ -140,7 +140,7 @@ export default class CalendarApp extends React.Component {
                                     </button>
                                 </div>
                             ))}
-                            <div className="form-group">
+                            <div className="form-group mb-0">
                                 <div className="row">
                                     <Sketch
                                         onChange={this.handlePickerChange.bind(this)}
