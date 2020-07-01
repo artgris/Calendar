@@ -13,6 +13,19 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StatController extends AbstractController
 {
+
+    const WEATHER_ICON = [
+        '01d' => '001-sunny',
+        '02d' => '011-sunny',
+        '03d' => '002-cloud',
+        '04d' => '020-cloudy',
+        '09d' => '005-heavy rain',
+        '10d' => '004-rain',
+        '11d' => '021-thunderstorm',
+        '13d' => '007-snow',
+        '50d' => '019-fog',
+    ];
+
     /**
      * @Route("/api/projects/stat", name="stat")
      */
@@ -36,13 +49,19 @@ class StatController extends AbstractController
         $lng = $user->getLongitude();
         $client = new Client();
 
-        $response = $client->get("https://api.openweathermap.org/data/2.5/onecall?lat={$lat}&lon={$lng}&appid={$apiKey}&exclude=current,minutely,hourly");
+        $response = $client->get("https://api.openweathermap.org/data/2.5/onecall?lat={$lat}&lon={$lng}&appid={$apiKey}&exclude=current,minutely,hourly&units=metric");
 
         $data = json_decode($response->getBody()->getContents());
         $w = [];
+        $today = new \DateTime();
         foreach ($data->daily as $day) {
+//            dd($day);
             $icon = $day->weather[0]->icon;
-            $w[] = "http://openweathermap.org/img/wn/{$icon}@2x.png";
+            $w[$today->format('Y-m-d')] = [
+                'temp' => round($day->temp->day,1),
+                'icon' => '/cute-weather/png/'.self::WEATHER_ICON[$icon].'.png'
+            ];
+            $today->modify('+1day');
         }
 
         return new JsonResponse($w);

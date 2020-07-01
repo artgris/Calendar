@@ -83,7 +83,7 @@ class EventRepository extends ServiceEntityRepository
                     $div++;
                     // si il n'y a pas de durée d'heure sur l'evenement, on augment le div pour divisé les events sans heure
                 } else {
-                    // nombre d'heur de l'evenement par jour
+                    // nombre d'heure de l'evenement par jour
                     $hours += $eventTmpp->hoursByDay($user);
                 }
             }

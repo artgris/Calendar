@@ -64,6 +64,7 @@ export default class CalendarApp extends React.Component {
         this.getLocation = this.getLocation.bind(this);
         this.copyToClipboard = this.copyToClipboard.bind(this);
         this.updateWeather = this.updateWeather.bind(this);
+        this.removeLocation = this.removeLocation.bind(this);
     }
 
     render() {
@@ -259,7 +260,11 @@ export default class CalendarApp extends React.Component {
                                             <button className={"btn btn-sm btn-primary"} onClick={this.getLocation}>
                                                 Utilisez ma localisation <i className={"fas fa-map-marker"}></i>
                                             </button>
+                                            <button className={"ml-2 btn btn-sm btn-danger"}onClick={this.removeLocation} >
+                                                <i className={"fas fa-trash"}></i>
+                                            </button>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -339,7 +344,6 @@ export default class CalendarApp extends React.Component {
 
         this.updateProject();
         this.updateEvent();
-
     }
 
     // Fullcalendar Events
@@ -569,6 +573,10 @@ export default class CalendarApp extends React.Component {
         } else {
             this.updateStat();
         }
+
+        if (this.state.latitude && this.state.longitude) {
+            this.updateWeatherApi({'latitude':this.state.latitude, 'longitude': this.state.longitude});
+        }
     };
 
     // Events Projets
@@ -783,19 +791,18 @@ export default class CalendarApp extends React.Component {
     }
 
     updateWeather(event) {
-
         var value = event.target.value;
         var data = event.target.id === 'update-latitude' ? {'latitude':value} : {'longitude':value};
-        this.updateWeatherApi(data);
+        this.updateWeatherApi(data, true);
     }
 
-    updateWeatherApi (data) {
+    updateWeatherApi (data, alert=false) {
+
         axios({
             url: this.props.url + '/users/' + this.props.userid,
             method: 'put',
             data: data
         }).then((result) => {
-            // this.showNotif("Météo modifiée");
             this.setState({
                 latitude : result.data.latitude,
                 longitude : result.data.longitude,
@@ -806,10 +813,14 @@ export default class CalendarApp extends React.Component {
             url: this.props.url + '/weather/',
             method: 'get',
         }).then((result) => {
-            this.showNotif("Météo modifiée");
-
-            console.log(result.data);
-
+            $('.weather').remove();
+            if (alert) {
+                this.showNotif("Météo modifiée");
+            }
+            for (const [key, value] of Object.entries(result.data)) {
+                var micon = "<span class='weather'><img  height=18 src='" + value.icon + "' alt=''><span class='temp'>" + value.temp + '°C' + '</span></span>';
+                $(".fc-day-top[data-date=" + key + "]").append(micon);
+            }
         });
 
 
@@ -872,12 +883,27 @@ export default class CalendarApp extends React.Component {
                         longitude: longitude
                     }
                 );
-                this.updateWeatherApi({'latitude':latitude, 'longitude': longitude});
+                this.updateWeatherApi({'latitude':latitude, 'longitude': longitude}, true);
             };
             navigator.geolocation.getCurrentPosition(success);
         } else {
             alert("Geolocation is not supported by this browser.");
         }
+    }
+
+    removeLocation(event) {
+        axios({
+            url: this.props.url + '/users/' + this.props.userid,
+            method: 'put',
+            data: {'latitude':null, 'longitude': null}
+        }).then((result) => {
+            this.setState({
+                latitude : '',
+                longitude : '',
+            });
+        });
+        $('.weather').remove();
+        this.showNotif("Météo supprimée");
     }
 
 }
