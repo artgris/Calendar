@@ -232,37 +232,15 @@ export default class CalendarApp extends React.Component {
                                         Météo
                                     </label>
                                     <div className="col-7 ">
-                                        <div className="input-group">
-                                            <input id="update-latitude"
-                                                   className="form-control"
-                                                   value={this.state.latitude}
-                                                   required
-                                                   readOnly
-                                                   onChange={this.updateWeather}
-                                                   type="text"/>
-                                            <div className="input-group-append">
-                                                <span className="input-group-text">Lat</span>
-                                            </div>
-                                        </div>
-                                        <div className="input-group mt-2">
-                                            <input id="update-longitude"
-                                                   className="form-control"
-                                                   value={this.state.longitude}
-                                                   required
-                                                   readOnly
-                                                   onChange={this.updateWeather}
-                                                   type="text"/>
-                                            <div className="input-group-append">
-                                                <span className="input-group-text">Lng</span>
-                                            </div>
-                                        </div>
                                         <div className="input-group mt-2">
                                             <button className={"btn btn-sm btn-primary"} onClick={this.getLocation}>
                                                 Utilisez ma localisation <i className={"fas fa-map-marker"}></i>
                                             </button>
-                                            <button className={"ml-2 btn btn-sm btn-danger"}onClick={this.removeLocation} >
+
+                                            <button className={"ml-2 btn btn-sm btn-danger"} onClick={this.removeLocation} >
                                                 <i className={"fas fa-trash"}></i>
                                             </button>
+
                                         </div>
 
                                     </div>
