@@ -24,8 +24,8 @@
         {{ _self.img(asset('cute-weather/png/016-sunset.png'), day.sunset|date('H\\hi')) }}
         <div class="w-100"></div>
         <br>
-        {{ _self.img(asset('cute-weather/png/012-windy.png'), day.wind_speed|round(1)~"m/s") }}
-        {{ _self.img(asset('cute-weather/png/030-raindrops.png'), day.humidity|round(1)~"%") }}
+        {{ _self.img(asset('cute-weather/png/012-windy.png'), day.wind_speed|round(1)~" m/s") }}
+        {{ _self.img(asset('cute-weather/png/030-raindrops.png'), day.humidity|round(1)~" %") }}
         <div class="w-100"></div>
         <br>
         {{ _self.img(asset('cute-weather/png/017-heatwave.png'), day.uvi|round(1)~ ' UV') }}
