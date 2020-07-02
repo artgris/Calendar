@@ -49,12 +49,16 @@ class StatController extends AbstractController
         $lng = $user->getLongitude();
         $client = new Client();
 
-        $response = $client->get("https://api.openweathermap.org/data/2.5/onecall?lat={$lat}&lon={$lng}&appid={$apiKey}&exclude=current,minutely,hourly&units=metric");
+        $response = $client->get("https://api.openweathermap.org/data/2.5/onecall?lat={$lat}&lon={$lng}&appid={$apiKey}&exclude=minutely,hourly&units=metric");
 
         $data = json_decode($response->getBody()->getContents());
         $w = [];
         $today = new \DateTime();
+        $i = 0;
         foreach ($data->daily as $day) {
+            if ($i === 0) {
+                $day->temp->day = $data->current->temp;
+            }
             $detail = $this->render('weather/detail.html.twig', ['day' => $day]);
             $icon = $day->weather[0]->icon;
             $w[$today->format('Y-m-d')] = [
@@ -63,6 +67,7 @@ class StatController extends AbstractController
                 'detail' => $detail->getContent()
             ];
             $today->modify('+1day');
+            $i++;
         }
 
         return new JsonResponse($w);
