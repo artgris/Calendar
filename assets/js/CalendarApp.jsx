@@ -800,7 +800,6 @@ export default class CalendarApp extends React.Component {
                 $(".fc-day-top[data-date=" + key + "] ").append(micon).find('.weather').popover({
                     container: 'body',
                     trigger: 'hover click',
-                    placement: 'top',
                     delay: {show: 100, hide: 50},
                     html: true,
                     content: value.detail
@@ -830,7 +829,6 @@ export default class CalendarApp extends React.Component {
             $(el).popover({
                 container: 'body',
                 trigger: 'hover',
-                placement: 'top',
                 delay: {show: 100, hide: 50},
                 html: true,
                 content: content
