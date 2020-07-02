@@ -802,6 +802,7 @@ export default class CalendarApp extends React.Component {
                     trigger: 'hover click',
                     delay: {show: 100, hide: 50},
                     html: true,
+                    placement: 'bottom',
                     content: value.detail
                 });
 
@@ -831,6 +832,7 @@ export default class CalendarApp extends React.Component {
                 trigger: 'hover',
                 delay: {show: 100, hide: 50},
                 html: true,
+                placement: 'bottom',
                 content: content
             });
         }
