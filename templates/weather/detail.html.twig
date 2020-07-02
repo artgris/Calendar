@@ -1,0 +1,37 @@
+{% macro col(name, value) %}
+    <div class="col-8">
+        {{ name }}
+    </div>
+    <div class="col-4">
+        {{ value }}
+    </div>
+    <div class="w-100"></div>
+{% endmacro %}
+
+{% macro img(img, value) %}
+    <div class="col">
+        <img width="35" src="{{ img }}"> {{ value }}
+    </div>
+{% endmacro %}
+
+<div class="container">
+    <div class="row">
+        {{ _self.img(asset('cute-weather/png/009-thermometer.png'), day.temp.min|round(1)~'°C') }}
+        {{ _self.img(asset('cute-weather/png/010-thermometer.png'), day.temp.max|round(1)~'°C') }}
+        <div class="w-100"></div>
+        <br>
+        {{ _self.img(asset('cute-weather/png/015-sunrise.png'), day.sunrise|date('H\\hi')) }}
+        {{ _self.img(asset('cute-weather/png/016-sunset.png'), day.sunset|date('H\\hi')) }}
+        <div class="w-100"></div>
+        <br>
+        {{ _self.img(asset('cute-weather/png/012-windy.png'), day.wind_speed|round(1)~"m/s") }}
+        {{ _self.img(asset('cute-weather/png/030-raindrops.png'), day.humidity|round(1)~"%") }}
+        <div class="w-100"></div>
+        <br>
+        {{ _self.img(asset('cute-weather/png/017-heatwave.png'), day.uvi|round(1)~ ' UV') }}
+        {% if day.rain is defined %}
+            {{ _self.img(asset('cute-weather/png/004-rain.png'), day.rain|round(1)~" mm") }}
+        {% endif %}
+    </div>
+</div>
+

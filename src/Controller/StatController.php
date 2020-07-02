@@ -55,11 +55,12 @@ class StatController extends AbstractController
         $w = [];
         $today = new \DateTime();
         foreach ($data->daily as $day) {
-//            dd($day);
+            $detail = $this->render('weather/detail.html.twig', ['day' => $day]);
             $icon = $day->weather[0]->icon;
             $w[$today->format('Y-m-d')] = [
                 'temp' => round($day->temp->day,1),
-                'icon' => '/cute-weather/png/'.self::WEATHER_ICON[$icon].'.png'
+                'icon' => '/cute-weather/png/'.self::WEATHER_ICON[$icon].'.png',
+                'detail' => $detail->getContent()
             ];
             $today->modify('+1day');
         }

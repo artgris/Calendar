@@ -797,7 +797,15 @@ export default class CalendarApp extends React.Component {
             }
             for (const [key, value] of Object.entries(result.data)) {
                 var micon = "<span class='weather'><img  height=18 src='" + value.icon + "' alt=''><span class='temp'>" + value.temp + '°C' + '</span></span>';
-                $(".fc-day-top[data-date=" + key + "]").append(micon);
+                $(".fc-day-top[data-date=" + key + "] ").append(micon).find('.weather').popover({
+                    container: 'body',
+                    trigger: 'hover',
+                    placement: 'top',
+                    delay: {show: 200, hide: 100},
+                    html: true,
+                    content: value.detail
+                });
+
             }
         });
 
