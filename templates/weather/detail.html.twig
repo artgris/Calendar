@@ -1,13 +1,3 @@
-{% macro col(name, value) %}
-    <div class="col-8">
-        {{ name }}
-    </div>
-    <div class="col-4">
-        {{ value }}
-    </div>
-    <div class="w-100"></div>
-{% endmacro %}
-
 {% macro img(img, value) %}
     <div class="col-6 mb-3">
         <img width="35" src="{{ img }}"> {{ value }}
@@ -15,7 +5,17 @@
 {% endmacro %}
 
 <div class="container">
-    <div class="row">
+    <div class="row align-items-center">
+
+        {% if icon is defined %}
+            <div class="col-6 mb-3">
+                <span>Aujourd'hui :</span>
+            </div>
+            <div class="col-6 mb-3">
+                <img width="35" src="{{ asset(icon) }}"> {{ day.temp.day|round(1)~'°C' }}
+            </div>
+        {% endif %}
+
         {% if day.temp.min is defined %}
             {{ _self.img(asset('cute-weather/png/009-thermometer.png'), day.temp.min|round(1)~'°C') }}
         {% endif %}

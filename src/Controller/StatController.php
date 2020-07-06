@@ -55,18 +55,21 @@ class StatController extends AbstractController
         $w = [];
         $today = new \DateTime();
         $i = 0;
-
         foreach ($data->daily as $day) {
-            if ($i === 0) {
-                $current = $data->current;
-                $day->weather = $current->weather;
-                $day->temp->day = $current->temp;
+
+            $parms = ['day' => $day];
+
+            if ($i ===0){
+                $parms['icon'] = $this->getIcon(self::WEATHER_ICON[$day->weather[0]->icon]);
             }
-            $detail = $this->render('weather/detail.html.twig', ['day' => $day]);
-            $icon = $day->weather[0]->icon;
+            $detail = $this->render('weather/detail.html.twig', $parms);
+
+            $temp = $i === 0 ? $data->current->temp : $day->temp->day;
+            $weather = $i === 0 ? $data->current->weather : $day->weather;
+
             $w[$today->format('Y-m-d')] = [
-                'temp' => round($day->temp->day, 1),
-                'icon' => '/cute-weather/png/' . self::WEATHER_ICON[$icon] . '.png',
+                'temp' => round($temp, 1),
+                'icon' => $this->getIcon(self::WEATHER_ICON[$weather[0]->icon]),
                 'detail' => $detail->getContent()
             ];
             $today->modify('+1day');
@@ -74,6 +77,11 @@ class StatController extends AbstractController
         }
 
         return new JsonResponse($w);
+    }
+
+    private function getIcon(string $icon)
+    {
+        return '/cute-weather/png/' . $icon . '.png';
     }
 
 }
