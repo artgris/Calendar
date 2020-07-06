@@ -58,13 +58,9 @@ class StatController extends AbstractController
 
         foreach ($data->daily as $day) {
             if ($i === 0) {
-
                 $current = $data->current;
-                $currentTemp = $current->temp;
-                $current->temp = $day->temp;
-                $current->temp->day = $currentTemp;
-                $day = $current;
-
+                $day->weather = $current->weather;
+                $day->temp->day = $current->temp;
             }
             $detail = $this->render('weather/detail.html.twig', ['day' => $day]);
             $icon = $day->weather[0]->icon;
