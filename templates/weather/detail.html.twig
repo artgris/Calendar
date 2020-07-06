@@ -8,12 +8,13 @@
     <div class="row align-items-center">
 
         {% if icon is defined %}
-            <div class="col-6 mb-3">
+            <div class="col-6 mb-1">
                 <span>Aujourd'hui :</span>
             </div>
-            <div class="col-6 mb-3">
+            <div class="col-6 mb-2">
                 <img width="35" src="{{ asset(icon) }}"> {{ day.temp.day|round(1)~'°C' }}
             </div>
+            <div class="w-100 mb-2 border"></div>
         {% endif %}
 
         {% if day.temp.min is defined %}
