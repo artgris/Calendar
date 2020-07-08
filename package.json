@@ -48,6 +48,6 @@
         "sweetalert2": "^9.4.1",
         "sweetalert2-react-content": "^2.0.2",
         "minimist": "^1.2",
-        "acorn": "^7.1"
+        "acorn": "^7.1.1"
     }
 }
