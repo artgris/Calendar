@@ -171,7 +171,7 @@ export default class CalendarApp extends React.Component {
                                                    onChange={this.handleProjectNameChange}
                                                    type="text"/>
                                             <div className="input-group-append">
-                                                <button type="submit" className="btn btn-outline-primary">
+                                                <button type="submit" className="btn btn-outline-secondary">
                                                     <i className="fas fa-plus"/>
                                                 </button>
                                             </div>
