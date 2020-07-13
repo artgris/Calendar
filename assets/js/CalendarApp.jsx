@@ -410,6 +410,9 @@ export default class CalendarApp extends React.Component {
                     this.setState({
                         events: this.state.events.filter(function (event) {
                             return event.id !== parseInt(key)
+                        }),
+                        searchResult: this.state.searchResult.filter(function (event) {
+                            return event.id !== parseInt(key)
                         })
                     });
                     this.setState({
@@ -639,7 +642,10 @@ export default class CalendarApp extends React.Component {
             this.setState(prevState => ({
                 events: prevState.events.map(
                     el => el.id === parseInt(id) ? {...el, title: result.data.title} : el
-                )
+                ),
+                searchResult: prevState.searchResult.map(
+                    el => el.id === parseInt(id) ? {...el, title: result.data.title} : el
+                ),
             }));
         }).catch(() => {
             this.displayErrorMessage()
@@ -694,9 +700,15 @@ export default class CalendarApp extends React.Component {
             url: this.props.url + '/projects',
             method: 'get',
         }).then((resultdata) => {
+
             this.setState({
-                events: resultdata.data['hydra:member']
+                events: resultdata.data['hydra:member'],
+                searchResult: resultdata.data['hydra:member'].filter(event => {
+                    return this.state.searchResult.map(event => event.id).includes(event.id)
+                })
             });
+
+
         }).catch(() => {
             this.displayErrorMessage()
         })
@@ -914,7 +926,6 @@ export default class CalendarApp extends React.Component {
 
     search(event) {
         const query = event.target.value;
-
         var result = this.state.events.filter(event => {
             return event.title.toLowerCase().includes(query.toLowerCase())
         })
