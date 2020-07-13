@@ -39,7 +39,9 @@ export default class CalendarApp extends React.Component {
         displayArchived: false,
         calendarEvents: [],
         events: [],
+        searchResult: [],
         value: '',
+        query: '',
         stat: {
             projects: {},
             total: '',
@@ -49,7 +51,7 @@ export default class CalendarApp extends React.Component {
         background: this.props.background,
         latitude: this.props.latitude,
         longitude: this.props.longitude,
-        projectName: 'ff'
+        projectName: ''
     };
 
     constructor(props, context) {
@@ -65,6 +67,9 @@ export default class CalendarApp extends React.Component {
         this.copyToClipboard = this.copyToClipboard.bind(this);
         this.updateWeather = this.updateWeather.bind(this);
         this.removeLocation = this.removeLocation.bind(this);
+        this.search = this.search.bind(this);
+        this.resetQuery = this.resetQuery.bind(this);
+
     }
 
     render() {
@@ -74,13 +79,19 @@ export default class CalendarApp extends React.Component {
             <option key={key} value={key}>{window.YASUMI_PROVIDERS[key]}</option>
         );
 
+        if (this.state.query) {
+            var events = this.state.searchResult;
+        } else {
+            var events = this.state.events
+        }
+
         return (
             <div className='mt-2 row'>
                 <div className="col-md-3">
                     {hasProject &&
 
                     <div className="row p-2">
-                        <div className="col">
+                        <div className="col pb-2">
                             <strong> Projets</strong>
                         </div>
                         <div className="col text-right">
@@ -96,12 +107,16 @@ export default class CalendarApp extends React.Component {
                                 </label>
                             </div>
                         </div>
+                        <div className="w-100"/>
+                        <div className="col-12 col-md-6 form-group">
+                            <input placeholder="Recherche..." value={this.state.query} onChange={this.search.bind(this)} className="form-control form-control-sm" type="text"/>
+                            <span id="searchclear" onClick={this.resetQuery} className={this.state.query ? "fas fa-times-circle" :"d-none"}/>
+                        </div>
                     </div>
                     }
-
                     <div id="external-events" className="pb-2 col">
                         <div className="row">
-                            {this.state.events.map(event => (
+                            {events.map(event => (
                                 <div
                                     onClick={this.projectClick}
                                     className={this.state.displayArchived === false && event.archived ? 'd-none' : 'fc-event col-md-6 mb-2'}
@@ -897,6 +912,27 @@ export default class CalendarApp extends React.Component {
         this.showNotif("Météo supprimée");
     }
 
+    search(event) {
+        const query = event.target.value;
+        console.log(query);
+
+
+        var result = this.state.events.filter(event => {
+            return event.title.includes(query)
+        })
+
+        this.setState({
+            query : query,
+            searchResult : result
+        });
+
+    }
+
+    resetQuery() {
+        this.setState({
+            query : '',
+        });
+    }
 }
 
 CalendarApp.propTypes = {
