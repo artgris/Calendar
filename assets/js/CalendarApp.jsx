@@ -914,11 +914,9 @@ export default class CalendarApp extends React.Component {
 
     search(event) {
         const query = event.target.value;
-        console.log(query);
-
 
         var result = this.state.events.filter(event => {
-            return event.title.includes(query)
+            return event.title.toLowerCase().includes(query.toLowerCase())
         })
 
         this.setState({
