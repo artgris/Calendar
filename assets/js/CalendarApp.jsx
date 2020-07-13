@@ -192,7 +192,7 @@ export default class CalendarApp extends React.Component {
                                 <strong>Paramétrage du calendrier</strong>
                             </p>
                         </div>
-                        <div className="row p-2">
+                        <div className="row align-items-center p-2">
                             <div className="col-12 mb-3">
                                 <div className="custom-control custom-checkbox">
                                     <input type="checkbox"
@@ -211,7 +211,7 @@ export default class CalendarApp extends React.Component {
                                     <label htmlFor="update-working" className="col-5 col-form-label">
                                         Journée de travail
                                     </label>
-                                    <div className="col-7 input-group ">
+                                    <div className="col-7 input-group form-group">
                                         <input id="update-working"
                                                className="form-control"
                                                value={this.state.workinghour}
@@ -225,7 +225,7 @@ export default class CalendarApp extends React.Component {
                                 </div>
                             </div>
                             <div className="col-12">
-                                <div className="row form-group">
+                                <div className="row align-items-center form-group">
                                     <label htmlFor="select-holiday" className="col-5 col-form-label">
                                         Jours fériés
                                     </label>
@@ -242,17 +242,17 @@ export default class CalendarApp extends React.Component {
                                 </div>
                             </div>
                             <div className="col-12">
-                                <div className="row form-group">
+                                <div className="row align-items-center form-group">
                                     <label htmlFor="select-weather" className="col-5 col-form-label">
                                         Météo
                                     </label>
-                                    <div className="col-7 ">
-                                        <div className="input-group mt-2">
-                                            <button className={"btn btn-sm btn-outline-primary"} onClick={this.getLocation}>
+                                    <div className="col-7 form-group input-group">
+                                        <div className="input-group-append mt-2">
+                                            <button className={"btn btn-outline-secondary"} onClick={this.getLocation}>
                                                 Utilisez ma localisation <i className={"fa fa-map-marker-alt"}/>
                                             </button>
 
-                                            <button className={"ml-2 btn btn-sm btn-outline-danger"} onClick={this.removeLocation} >
+                                            <button className={"btn  btn-outline-danger border-secondary"} onClick={this.removeLocation} >
                                                 <i className={"fa fa-trash-alt"}/>
                                             </button>
 

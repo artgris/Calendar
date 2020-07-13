@@ -47,10 +47,10 @@ class Popup extends React.Component {
                         <input className="form-control" type="text" onKeyPress={this.keyPressfindColor} value={this.state.url} onChange={this.updateUrl}
                                placeholder="Url ou texte"/>
                         <div className="input-group-append">
-                            <button type="button" className="btn btn-outline-primary" onClick={this.findColor}>
+                            <button type="button" className="btn btn-outline-secondary" onClick={this.findColor}>
                                 {button}
                             </button>
-                            <button type="button" className="btn btn-outline-danger" onClick={this.props.closePopup}>
+                            <button type="button" className="btn btn-outline-danger border-secondary" onClick={this.props.closePopup}>
                                 <i className="fas fa-times"/>
                             </button>
                         </div>
