@@ -248,7 +248,7 @@ export default class CalendarApp extends React.Component {
                                     </label>
                                     <div className="col-7 form-group input-group">
                                         <div className="input-group-append mt-2">
-                                            <button className={"btn btn-outline-secondary"} onClick={this.getLocation}>
+                                            <button className={"btn btn-outline-secondary rounded-left"} onClick={this.getLocation}>
                                                 Utilisez ma localisation <i className={"fa fa-map-marker-alt"}/>
                                             </button>
 
