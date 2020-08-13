@@ -421,7 +421,9 @@ export default class CalendarApp extends React.Component {
                         })
                     });
                     this.datesRender();
-                });
+                }).catch(error => {
+                    this.redirectIfNotLogin(error);
+                })
             }
         }).catch(() => {
             this.displayErrorMessage()
@@ -496,7 +498,10 @@ export default class CalendarApp extends React.Component {
                         })
                     });
                     this.datesRender();
-                });
+                }).catch(error => {
+                    this.redirectIfNotLogin(error);
+                })
+                ;
             }
         }).catch(() => {
             this.displayErrorMessage()
@@ -524,8 +529,8 @@ export default class CalendarApp extends React.Component {
             }));
             this.datesRender();
 
-        }).catch(() => {
-            this.displayErrorMessage()
+        }).catch((error) => {
+            this.redirectIfNotLogin(error);
         })
 
     };
@@ -541,16 +546,17 @@ export default class CalendarApp extends React.Component {
                 "start": value.dateStr,
                 'user': this.props.user,
                 "project": this.props.url + '/projects/' + value.draggedEl.getAttribute("data-id")
-            }
+            },
         }).then((result) => {
+
             this.showNotif("Événement ajouté");
             this.setState({
                 calendarEvents: [...this.state.calendarEvents, result.data]
             });
             this.datesRender();
 
-        }).catch(() => {
-            this.displayErrorMessage()
+        }).catch((error) => {
+            this.redirectIfNotLogin(error);
         })
     };
 
@@ -602,7 +608,7 @@ export default class CalendarApp extends React.Component {
                     errors: error.response.data.violations
                 })
             } else {
-                this.displayErrorMessage()
+                this.redirectIfNotLogin(error);
             }
         })
     };
@@ -623,8 +629,8 @@ export default class CalendarApp extends React.Component {
             this.showNotif("Projet modifié");
             this.updateProject();
             this.updateEvent();
-        }).catch(() => {
-            this.displayErrorMessage()
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
         })
     }
 
@@ -647,8 +653,8 @@ export default class CalendarApp extends React.Component {
                     el => el.id === parseInt(id) ? {...el, title: result.data.title} : el
                 ),
             }));
-        }).catch(() => {
-            this.displayErrorMessage()
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
         })
 
     }
@@ -663,8 +669,8 @@ export default class CalendarApp extends React.Component {
         }).then(() => {
             this.showNotif("Projet modifié");
             this.updateProject();
-        }).catch(() => {
-            this.displayErrorMessage()
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
         })
 
     }
@@ -690,8 +696,8 @@ export default class CalendarApp extends React.Component {
             this.setState({
                 stat: result.data
             });
-        }).catch(() => {
-            this.displayErrorMessage()
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
         })
     };
 
@@ -707,10 +713,8 @@ export default class CalendarApp extends React.Component {
                     return this.state.searchResult.map(event => event.id).includes(event.id)
                 })
             });
-
-
-        }).catch(() => {
-            this.displayErrorMessage()
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
         })
     }
 
@@ -725,6 +729,8 @@ export default class CalendarApp extends React.Component {
             this.showNotif("Événement modifié");
             this.datesRender();
             this.updateEvent();
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
         })
     }
 
@@ -739,6 +745,8 @@ export default class CalendarApp extends React.Component {
             this.showNotif("Événement modifié");
             this.datesRender();
             this.updateEvent();
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
         })
     }
 
@@ -759,7 +767,9 @@ export default class CalendarApp extends React.Component {
             this.showNotif("Calendrier modifié");
             this.updateStat();
             this.calendarComponentRef.current.calendar.setOption('weekends', result.data.weekends)
-        });
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
+        })
     }
 
     updateWorkingHour(event) {
@@ -775,7 +785,9 @@ export default class CalendarApp extends React.Component {
                 workinghour: result.data.workingHour
             });
             this.updateStat();
-        });
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
+        })
     }
 
     updateHoliday(event) {
@@ -792,7 +804,9 @@ export default class CalendarApp extends React.Component {
             });
             this.updateEvent();
             this.updateStat();
-        });
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
+        })
     }
 
     updateWeather(event) {
@@ -812,7 +826,9 @@ export default class CalendarApp extends React.Component {
                 latitude : result.data.latitude,
                 longitude : result.data.longitude,
             });
-        });
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
+        })
 
         axios({
             url: this.props.url + '/weather/',
@@ -834,7 +850,9 @@ export default class CalendarApp extends React.Component {
                 });
 
             }
-        });
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
+        })
 
 
     }
@@ -919,7 +937,9 @@ export default class CalendarApp extends React.Component {
                 latitude : '',
                 longitude : '',
             });
-        });
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
+        })
         $('.weather').remove();
         this.showNotif("Météo supprimée");
     }
@@ -941,6 +961,14 @@ export default class CalendarApp extends React.Component {
         this.setState({
             query : '',
         });
+    }
+
+    redirectIfNotLogin(error) {
+        if (error.response.status === 401) {
+            window.location.href =  error.response.data.login;
+        } else {
+            this.displayErrorMessage()
+        }
     }
 }
 
