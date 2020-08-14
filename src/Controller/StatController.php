@@ -11,9 +11,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/api")
+ */
 class StatController extends AbstractController
 {
-
     const WEATHER_ICON = [
         '01d' => '001-sunny',
         '02d' => '011-sunny',
@@ -27,7 +29,7 @@ class StatController extends AbstractController
     ];
 
     /**
-     * @Route("/api/projects/stat", name="stat")
+     * @Route("/projects/stat", name="stat")
      */
     public function stat(EntityManagerInterface $em, Request $request)
     {
@@ -37,43 +39,44 @@ class StatController extends AbstractController
     }
 
     /**
-     * @Route("/api/weather", name="weather")
+     * @Route("/weather", name="weather")
      */
     public function weather(EntityManagerInterface $em, Request $request)
     {
-
         $apiKey = $this->getParameter('open_weather_key');
         $user = $this->getUser();
         /** @var User $user */
         $lat = $user->getLatitude();
         $lng = $user->getLongitude();
-        $client = new Client();
 
-        $response = $client->get("https://api.openweathermap.org/data/2.5/onecall?lat={$lat}&lon={$lng}&appid={$apiKey}&exclude=minutely,hourly&units=metric");
-
-        $data = json_decode($response->getBody()->getContents());
         $w = [];
-        $today = new \DateTime();
-        $i = 0;
-        foreach ($data->daily as $day) {
+        if ($lat && $lng) {
+            $client = new Client();
 
-            $parms = ['day' => $day];
+            $response = $client->get("https://api.openweathermap.org/data/2.5/onecall?lat={$lat}&lon={$lng}&appid={$apiKey}&exclude=minutely,hourly&units=metric");
 
-            if ($i ===0){
-                $parms['icon'] = $this->getIcon(self::WEATHER_ICON[$day->weather[0]->icon]);
+            $data = json_decode($response->getBody()->getContents());
+            $today = new \DateTime();
+            $i = 0;
+            foreach ($data->daily as $day) {
+                $parms = ['day' => $day];
+
+                if ($i === 0) {
+                    $parms['icon'] = $this->getIcon(self::WEATHER_ICON[$day->weather[0]->icon]);
+                }
+                $detail = $this->render('weather/detail.html.twig', $parms);
+
+                $temp = $i === 0 ? $data->current->temp : $day->temp->day;
+                $weather = $i === 0 ? $data->current->weather : $day->weather;
+
+                $w[$today->format('Y-m-d')] = [
+                    'temp' => round($temp, 1),
+                    'icon' => $this->getIcon(self::WEATHER_ICON[$weather[0]->icon]),
+                    'detail' => $detail->getContent(),
+                ];
+                $today->modify('+1day');
+                $i++;
             }
-            $detail = $this->render('weather/detail.html.twig', $parms);
-
-            $temp = $i === 0 ? $data->current->temp : $day->temp->day;
-            $weather = $i === 0 ? $data->current->weather : $day->weather;
-
-            $w[$today->format('Y-m-d')] = [
-                'temp' => round($temp, 1),
-                'icon' => $this->getIcon(self::WEATHER_ICON[$weather[0]->icon]),
-                'detail' => $detail->getContent()
-            ];
-            $today->modify('+1day');
-            $i++;
         }
 
         return new JsonResponse($w);
@@ -81,7 +84,6 @@ class StatController extends AbstractController
 
     private function getIcon(string $icon)
     {
-        return '/cute-weather/png/' . $icon . '.png';
+        return '/cute-weather/png/'.$icon.'.png';
     }
-
 }

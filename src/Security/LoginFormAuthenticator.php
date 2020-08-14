@@ -110,7 +110,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         $url = $this->getLoginUrl();
 
         if ($request->get('_route') !== 'homepage') {
-
             return new JsonResponse(
                 ['status' => 'KO', 'message' => 'Unauthorized', 'login' => $url],
                 Response::HTTP_UNAUTHORIZED);

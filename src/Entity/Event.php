@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         "get"={"security"="is_granted('ROLE_USER') or object.user == user"},
  *         "put"={"security"="is_granted('ROLE_USER') or object.user == user"},
  *     }
- * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
+ *     @ORM\Entity(repositoryClass="App\Repository\EventRepository")
  */
 class Event
 {
@@ -152,7 +152,7 @@ class Event
 
     public function getColor(): ?string
     {
-       return  !empty($this->project->getColor()) ? $this->project->getColor() : '#000';
+        return  !empty($this->project->getColor()) ? $this->project->getColor() : '#000';
     }
 
     public function getHours(): ?float
@@ -178,6 +178,7 @@ class Event
                     $days++;
                 }
             }
+
             return $days;
         }
 
@@ -221,5 +222,4 @@ class Event
     {
         $this->info = $info;
     }
-
 }

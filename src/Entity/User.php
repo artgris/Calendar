@@ -60,23 +60,23 @@ class User implements UserInterface
     /**
      * @var bool
      *
-     * @ORM\Column(type="boolean", options={"default" : false})
+     * @ORM\Column(type="boolean", options={"default": false})
      */
     private $weekends = false;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", options={"default" : "LU"}, nullable=true)
+     * @ORM\Column(type="string", options={"default": "LU"}, nullable=true)
      */
-    private $holiday = "LU";
+    private $holiday = 'LU';
 
     /**
      * @var int
-     * @ORM\Column(type="smallint", options={"unsigned"=true}, options={"default" : 8})
+     * @ORM\Column(type="smallint", options={"unsigned": true}, options={"default": 8})
      * @Assert\GreaterThan(value="0")
      * @Assert\LessThanOrEqual(value="24")
-     * @Assert\NotBlank()
+     * @Assert\NotBlank
      */
     private $workingHour = 8;
 
@@ -289,5 +289,4 @@ class User implements UserInterface
     {
         $this->longitude = $longitude;
     }
-
 }

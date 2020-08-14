@@ -18,7 +18,7 @@ class Holidays
 
         $provider = $this->getProviderFromString($user->getHoliday());
 
-        if ($provider ===  null) {
+        if ($provider === null) {
             return [];
         }
 
@@ -42,13 +42,11 @@ class Holidays
         return $response;
     }
 
-
-    private function getProviderFromString(?string $provider = "LU") {
-
+    private function getProviderFromString(?string $provider = 'LU')
+    {
         if ($provider === 'LU') {
             return "App\Service\Yasumi\Luxembourg";
         }
-
 
         return Yasumi::getProviders()[$provider] ?? null;
     }

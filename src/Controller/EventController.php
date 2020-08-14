@@ -9,10 +9,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class EventController
+ *
+ * @Route("/api")
+ */
 class EventController extends AbstractController
 {
     /**
-     * @Route("/api/events/all", name="all_event")
+     * @Route("/events/all", name="all_event")
      */
     public function stat(EntityManagerInterface $em, Holidays $holidays)
     {

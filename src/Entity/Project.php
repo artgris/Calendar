@@ -8,7 +8,7 @@ use App\Api\Filter\UserFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+
 /**
  * @ApiResource(
  *     attributes={"security": "is_granted('ROLE_USER')", "filters": {UserFilter::class}},
@@ -144,12 +144,10 @@ class Project
         return $this;
     }
 
-
     public function getBackgroundColor()
     {
         return !empty($this->color) ? $this->color : '#000';
     }
-
 
     public function getTextColor()
     {
@@ -171,5 +169,4 @@ class Project
     {
         $this->archived = $archived;
     }
-
 }

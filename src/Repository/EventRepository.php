@@ -57,7 +57,6 @@ class EventRepository extends ServiceEntityRepository
             if ($end) {
                 $period = new DatePeriod($start, DateInterval::createFromDateString('1 day'), $end);
                 foreach ($period as $dt) {
-
                     /** @var \DateTime $dt */
                     if ($dt >= $startMonth && $dt < $endMonth) {
                         if ($isWeekends || (!$isWeekends && $this->isAWeekDay($dt))) {
@@ -81,7 +80,7 @@ class EventRepository extends ServiceEntityRepository
                 /** @var Event $eventTmpp */
                 if ($eventTmpp->getHours() === null) {
                     $div++;
-                    // si il n'y a pas de durée d'heure sur l'evenement, on augment le div pour divisé les events sans heure
+                // si il n'y a pas de durée d'heure sur l'evenement, on augment le div pour divisé les events sans heure
                 } else {
                     // nombre d'heure de l'evenement par jour
                     $hours += $eventTmpp->hoursByDay($user);
@@ -101,7 +100,6 @@ class EventRepository extends ServiceEntityRepository
                 $stat[$eventTmp->getProject()->getTitle()]['hours'] += $currentDuration;
 
                 if ($eventTmp->getInfo()) {
-
                     if (!isset($stat[$eventTmp->getProject()->getTitle()]['list'][$eventTmp->getId()]['duration'])) {
                         $stat[$eventTmp->getProject()->getTitle()]['list'][$eventTmp->getId()]['duration'] = $currentDuration;
                         $duration = $currentDuration;
@@ -131,7 +129,7 @@ class EventRepository extends ServiceEntityRepository
         $total = 0;
 
         uasort($stat, function ($a, $b) {
-            return ($a['hours'] < $b['hours']);
+            return $a['hours'] < $b['hours'];
         });
 
         foreach ($stat as $key => $value) {
@@ -139,6 +137,7 @@ class EventRepository extends ServiceEntityRepository
             $valueFormat = $this->formatDays($value['hours'], $user);
             $statArray[$key] = ['hours' => $key.' : '.$valueFormat, 'list' => $value['list']];
         }
+
         return [
             'total' => $this->formatDays($total, $user),
             'totalCalcul' => $this->totalDaysByDate($user, $date),
@@ -148,7 +147,6 @@ class EventRepository extends ServiceEntityRepository
 
     private function formatDays($value, User $user)
     {
-
         if ($value == 0) {
             return '0J';
         }
@@ -161,7 +159,7 @@ class EventRepository extends ServiceEntityRepository
             if ($hours) {
                 $hoursFormat = $this->convertHoursToMinutes($hours, true);
             }
-            $valueFormat = (int)($value / $user->getWorkingHour()).'J'.$hoursFormat;
+            $valueFormat = (int) ($value / $user->getWorkingHour()).'J'.$hoursFormat;
         }
 
         return $valueFormat;
