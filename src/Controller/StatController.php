@@ -24,7 +24,6 @@ class StatController extends AbstractController
         '03d' => '002-cloud',
         '03n' => '002-cloud',
         '04d' => '020-cloudy',
-        '04n' => '020-cloudy',
         '09d' => '005-heavy rain',
         '09n' => '005-heavy rain',
         '10d' => '004-rain',
@@ -78,11 +77,13 @@ class StatController extends AbstractController
                 $temp = $i === 0 ? $data->current->temp : $day->temp->day;
                 $weather = $i === 0 ? $data->current->weather : $day->weather;
 
-                $w[$today->format('Y-m-d')] = [
-                    'temp' => round($temp, 1),
-                    'icon' => $this->getIcon(self::WEATHER_ICON[$weather[0]->icon]),
-                    'detail' => $detail->getContent(),
-                ];
+                if (isset (self::WEATHER_ICON[$weather[0]->icon])) {
+                    $w[$today->format('Y-m-d')] = [
+                        'temp' => round($temp, 1),
+                        'icon' => $this->getIcon(self::WEATHER_ICON[$weather[0]->icon]),
+                        'detail' => $detail->getContent(),
+                    ];
+                }
                 $today->modify('+1day');
                 $i++;
             }
@@ -93,6 +94,6 @@ class StatController extends AbstractController
 
     private function getIcon(string $icon)
     {
-        return '/cute-weather/png/'.$icon.'.png';
+        return '/cute-weather/png/' . $icon . '.png';
     }
 }
