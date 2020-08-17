@@ -24,6 +24,7 @@ class StatController extends AbstractController
         '03d' => '002-cloud',
         '03n' => '002-cloud',
         '04d' => '020-cloudy',
+        '04n' => '020-cloudy',
         '09d' => '005-heavy rain',
         '09n' => '005-heavy rain',
         '10d' => '004-rain',
