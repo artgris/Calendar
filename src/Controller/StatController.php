@@ -18,14 +18,23 @@ class StatController extends AbstractController
 {
     const WEATHER_ICON = [
         '01d' => '001-sunny',
+        '01n' => '001-sunny',
         '02d' => '011-sunny',
+        '02n' => '011-sunny',
         '03d' => '002-cloud',
+        '03n' => '002-cloud',
         '04d' => '020-cloudy',
+        '04n' => '020-cloudy',
         '09d' => '005-heavy rain',
+        '09n' => '005-heavy rain',
         '10d' => '004-rain',
+        '10n' => '004-rain',
         '11d' => '021-thunderstorm',
+        '11n' => '021-thunderstorm',
         '13d' => '007-snow',
+        '13n' => '007-snow',
         '50d' => '019-fog',
+        '50n' => '019-fog',
     ];
 
     /**
