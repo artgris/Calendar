@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Service\EventService;
 use App\Service\Yasumi\Holidays;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +18,20 @@ use Symfony\Component\Routing\Annotation\Route;
 class EventController extends AbstractController
 {
     /**
+     * @var EventService
+     */
+    private $eventService;
+
+    /**
+     * EventController constructor.
+     */
+    public function __construct(EventService $eventService)
+    {
+        $this->eventService = $eventService;
+    }
+
+
+    /**
      * @Route("/events/all", name="all_event")
      */
     public function stat(EntityManagerInterface $em, Holidays $holidays)
@@ -27,21 +42,23 @@ class EventController extends AbstractController
 
         foreach ($events as $event) {
             /** @var Event $event */
-            $response[] = [
-                'id' => $event->getId(),
-                'color' => $event->getColor(),
-                'textColor' => $event->getTextColor(),
-                'title' => $event->getTitle(),
-                'hours' => $event->getHours(),
-                'info' => $event->getInfo(),
-                'projectName' => $event->getProjectName(),
-                'allDay' => true,
-                'start' => $event->getStart()->format('Y-m-d\TH:i:sP'),
-                'end' => $event->getEnd() ? $event->getEnd()->format('Y-m-d\TH:i:sP') : '',
-                'project' => '/api/projects/'.$event->getProject()->getId(),
-            ];
+            $response[] = $this->eventService->format($event);
         }
 
         return new JsonResponse($response);
     }
+
+    /**
+     * @Route("/events/copy/{id}", name="event_copy")
+     */
+    public function copyEvent(EntityManagerInterface $em, Event $event)
+    {
+        $newEvent = clone $event;
+        $em->persist($newEvent);
+        $em->flush();
+
+        return new JsonResponse($this->eventService->format($newEvent));
+    }
+
+
 }

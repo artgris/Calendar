@@ -222,4 +222,11 @@ class Event
     {
         $this->info = $info;
     }
+
+    public function __clone()
+    {
+        $this->id = null;
+    }
+
+
 }
