@@ -106,14 +106,13 @@ class EventRepository extends ServiceEntityRepository
                 $stat[$project->getId()]['hours'] += $currentDuration;
 
                 if ($eventTmp->getInfo()) {
-
-                    if (!isset($stat[$project->getId()]['list'][$eventTmp->getId()]['duration'])) {
-                        $stat[$project->getId()]['list'][$eventTmp->getId()]['duration'] = $currentDuration;
+                    if (!isset($stat[$project->getId()]['list'][$eventTmp->getInfo()]['duration'])) {
+                        $stat[$project->getId()]['list'][$eventTmp->getInfo()]['duration'] = $currentDuration;
                         $duration = $currentDuration;
                     } else {
-                        $duration = $stat[$project->getId()]['list'][$eventTmp->getId()]['duration'] + $currentDuration;
+                        $duration = $stat[$project->getId()]['list'][$eventTmp->getInfo()]['duration'] + $currentDuration;
                     }
-                    $stat[$project->getId()]['list'][$eventTmp->getId()] = ['duration' => $duration, 'info' => $eventTmp->getInfo()];
+                    $stat[$project->getId()]['list'][$eventTmp->getInfo()] = ['duration' => $duration, 'info' => $eventTmp->getInfo()];
                 }
             }
         }
