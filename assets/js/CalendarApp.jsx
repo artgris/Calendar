@@ -69,6 +69,8 @@ export default class CalendarApp extends React.Component {
         this.removeLocation = this.removeLocation.bind(this);
         this.search = this.search.bind(this);
         this.resetQuery = this.resetQuery.bind(this);
+        this.removeEvent = this.removeEvent.bind(this);
+        this.copyEvent = this.copyEvent.bind(this);
 
     }
 
@@ -298,10 +300,10 @@ export default class CalendarApp extends React.Component {
                     </div>
                     <div id="stat-text">
                         {Object.keys(this.state.stat.projects).map(key => (
-                            <span key={key}>
+                            <span key={"project-"+key}>
                                 - {this.state.stat.projects[key].hours}  <br/>
-                                {this.state.stat.projects[key].list.map(info => (
-                                    <span key={key + info}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⤷ {info} <br/></span>
+                                {this.state.stat.projects[key].list.map((info, index) => (
+                                    <span key={"project-"+key +"-event-"+index}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⤷ {info} <br/></span>
                                 ))}
                             </span>
                         ))}
@@ -391,6 +393,7 @@ export default class CalendarApp extends React.Component {
                             </div>
                         </div>
                     </div>
+
                 </>
             ,
             confirmButtonColor: "#d33",
@@ -479,34 +482,59 @@ export default class CalendarApp extends React.Component {
                 <p className="mt-4">
                     {endDate ? startDate + ' au ' + endDate : startDate}
                 </p>
+                <div className="mt-4">
+                    <button type="button" onClick={(e) => this.removeEvent(e, id)} className="m-1 btn btn-danger"
+                       >Supprimer
+                    </button>
+                    <button type="button" onClick={(e) => this.copyEvent(e, id)} className="m-1 btn btn-primary"
+                    >Dupliquer
+                    </button>
+                    <button type="button" onClick={()=> Alert.close()} className="m-1 btn btn-secondary"
+                    >Fermer
+                    </button>
+                </div>
             </>,
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            confirmButtonText: "Supprimer",
-            cancelButtonText: "Fermer",
-        }).then(result => {
-            if (result.value) {
-                axios({
-                    url: this.props.url + '/events/' + eventClick.event.id,
-                    method: 'delete',
-                }).then(() => {
-                    this.showNotif("Événement supprimé");
-                    eventClick.event.remove();
-                    this.setState({
-                        calendarEvents: this.state.calendarEvents.filter(function (event) {
-                            return event.id !== parseInt(id)
-                        })
-                    });
-                    this.datesRender();
-                }).catch(error => {
-                    this.redirectIfNotLogin(error);
-                })
-                ;
-            }
-        }).catch(() => {
-            this.displayErrorMessage()
+            showCancelButton: false,
+            showConfirmButton: false
         })
     };
+
+    removeEvent = (e, id) => {
+        axios({
+            url: this.props.url + '/events/' + id,
+            method: 'delete',
+        }).then(() => {
+            this.showNotif("Événement supprimé");
+            this.setState({
+                calendarEvents: this.state.calendarEvents.filter(function (event) {
+                    return event.id !== parseInt(id)
+                })
+            });
+            this.datesRender();
+            Alert.close()
+
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
+        })
+    }
+
+    copyEvent = (e, id) => {
+        axios({
+            url: this.props.url + '/events/copy/' + id,
+        }).then((result) => {
+            this.showNotif("Événement dupliqué");
+
+            this.setState({
+                calendarEvents: [...this.state.calendarEvents, result.data]
+            });
+
+            this.datesRender();
+            Alert.close()
+
+        }).catch(error => {
+            this.redirectIfNotLogin(error);
+        })
+    }
 
     // Triggered when dragging stops and the event has moved to a different day/time.
     // quand on deplace ou resize un event
