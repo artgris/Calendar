@@ -278,7 +278,7 @@ export default class CalendarApp extends React.Component {
                         ref={this.calendarComponentRef}
                         weekends={this.state.weekends === '1'}
                         events={this.state.calendarEvents}
-                        eventLimit={true}
+                        eventLimit={false}
                         editable={true}
                         drop={this.drop}
                         eventTextColor='white'
