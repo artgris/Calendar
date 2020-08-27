@@ -81,11 +81,7 @@ export default class CalendarApp extends React.Component {
             <option key={key} value={key}>{window.YASUMI_PROVIDERS[key]}</option>
         );
 
-        if (this.state.query) {
-            var events = this.state.searchResult;
-        } else {
-            var events = this.state.events
-        }
+        var events = this.state.query ? this.state.searchResult : this.state.events;
 
         return (
             <div className='mt-2 row'>
@@ -111,8 +107,9 @@ export default class CalendarApp extends React.Component {
                         </div>
                         <div className="w-100"/>
                         <div className="col-12 col-md-6 form-group">
-                            <input placeholder="Recherche..." value={this.state.query} onChange={this.search.bind(this)} className="form-control form-control-sm" type="text"/>
-                            <span id="searchclear" onClick={this.resetQuery} className={this.state.query ? "fas fa-times-circle" :"d-none"}/>
+                            <input placeholder="Recherche..." value={this.state.query} onChange={this.search.bind(this)}
+                                   className="form-control form-control-sm" type="text"/>
+                            <span id="searchclear" onClick={this.resetQuery} className={this.state.query ? "fas fa-times-circle" : "d-none"}/>
                         </div>
                     </div>
                     }
@@ -254,7 +251,7 @@ export default class CalendarApp extends React.Component {
                                                 Utilisez ma localisation <i className={"fa fa-map-marker-alt"}/>
                                             </button>
 
-                                            <button className={"btn  btn-outline-danger border-secondary"} onClick={this.removeLocation} >
+                                            <button className={"btn  btn-outline-danger border-secondary"} onClick={this.removeLocation}>
                                                 <i className={"fa fa-trash-alt"}/>
                                             </button>
 
@@ -295,15 +292,17 @@ export default class CalendarApp extends React.Component {
                 <div className="col-md-3">
                     <div className="col-12">
                         <p className="text-center">
-                            <strong>Récapitulatif du mois <button onClick={this.copyToClipboard} id="copy-to-clipboard" data-toggle="tooltip" data-placement="left" title="Copier dans le presse papier" className='btn'> <i className="far fa-copy"/> </button> </strong>
+                            <strong>Récapitulatif du mois <button onClick={this.copyToClipboard} id="copy-to-clipboard" data-toggle="tooltip"
+                                                                  data-placement="left" title="Copier dans le presse papier" className='btn'><i
+                                className="far fa-copy"/></button></strong>
                         </p>
                     </div>
                     <div id="stat-text">
                         {Object.keys(this.state.stat.projects).map(key => (
-                            <span key={"project-"+key}>
-                                - {this.state.stat.projects[key].hours}  <br/>
+                            <span key={"project-" + key}>
+                                - {this.state.stat.projects[key].hours} <br/>
                                 {this.state.stat.projects[key].list.map((info, index) => (
-                                    <span key={"project-"+key +"-event-"+index}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⤷ {info} <br/></span>
+                                    <span key={"project-" + key + "-event-" + index}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⤷ {info} <br/></span>
                                 ))}
                             </span>
                         ))}
@@ -484,12 +483,12 @@ export default class CalendarApp extends React.Component {
                 </p>
                 <div className="mt-4">
                     <button type="button" onClick={(e) => this.removeEvent(e, id)} className="m-1 btn btn-danger"
-                       >Supprimer
+                    >Supprimer
                     </button>
                     <button type="button" onClick={(e) => this.copyEvent(e, id)} className="m-1 btn btn-primary"
                     >Dupliquer
                     </button>
-                    <button type="button" onClick={()=> Alert.close()} className="m-1 btn btn-secondary"
+                    <button type="button" onClick={() => Alert.close()} className="m-1 btn btn-secondary"
                     >Fermer
                     </button>
                 </div>
@@ -605,7 +604,7 @@ export default class CalendarApp extends React.Component {
         }
 
         if (this.state.latitude && this.state.longitude) {
-            this.updateWeatherApi({'latitude':this.state.latitude, 'longitude': this.state.longitude});
+            this.updateWeatherApi({'latitude': this.state.latitude, 'longitude': this.state.longitude});
         }
     };
 
@@ -839,11 +838,11 @@ export default class CalendarApp extends React.Component {
 
     updateWeather(event) {
         var value = event.target.value;
-        var data = event.target.id === 'update-latitude' ? {'latitude':value} : {'longitude':value};
+        var data = event.target.id === 'update-latitude' ? {'latitude': value} : {'longitude': value};
         this.updateWeatherApi(data, true);
     }
 
-    updateWeatherApi (data, alert=false) {
+    updateWeatherApi(data, alert = false) {
 
         axios({
             url: this.props.url + '/users/' + this.props.userid,
@@ -851,8 +850,8 @@ export default class CalendarApp extends React.Component {
             data: data
         }).then((result) => {
             this.setState({
-                latitude : result.data.latitude,
-                longitude : result.data.longitude,
+                latitude: result.data.latitude,
+                longitude: result.data.longitude,
             });
         }).catch(error => {
             this.redirectIfNotLogin(error);
@@ -898,7 +897,7 @@ export default class CalendarApp extends React.Component {
         let icon = '';
         if (event.extendedProps.info) {
             $(".popover").remove();
-            icon = '<i style="color:'+event.textColor+'" class="p-1 float-right far fa-sticky-note"/>';
+            icon = '<i style="color:' + event.textColor + '" class="p-1 float-right far fa-sticky-note"/>';
             var content = striptags(event.extendedProps.info, ['\n']).replace(new RegExp('\r?\n', 'g'), "<br />");
             $(el).popover({
                 container: 'body',
@@ -923,7 +922,7 @@ export default class CalendarApp extends React.Component {
         var element = $("#stat-text");
         var $temp = $("<textarea>");
         $("body").append($temp);
-        $temp.val(this.stripHtml($(element).html().replace( /<br\s*[\/]?>/gi, "\r\n"))).select();
+        $temp.val(this.stripHtml($(element).html().replace(/<br\s*[\/]?>/gi, "\r\n"))).select();
         document.execCommand("copy");
         $temp.remove();
         this.showNotif("Récapitulatif copié dans le presse-papier")
@@ -942,11 +941,11 @@ export default class CalendarApp extends React.Component {
                         longitude: longitude
                     }
                 );
-                this.updateWeatherApi({'latitude':latitude, 'longitude': longitude}, true);
+                this.updateWeatherApi({'latitude': latitude, 'longitude': longitude}, true);
             };
 
             let error = () => {
-               alert("Vous avez bloqué le suivi de votre position géographique sur cette page. Veuillez l'activer pour pouvoir utiliser la météo.");
+                alert("Vous avez bloqué le suivi de votre position géographique sur cette page. Veuillez l'activer pour pouvoir utiliser la météo.");
             }
 
             navigator.geolocation.getCurrentPosition(success, error);
@@ -959,11 +958,11 @@ export default class CalendarApp extends React.Component {
         axios({
             url: this.props.url + '/users/' + this.props.userid,
             method: 'put',
-            data: {'latitude':null, 'longitude': null}
+            data: {'latitude': null, 'longitude': null}
         }).then((result) => {
             this.setState({
-                latitude : '',
-                longitude : '',
+                latitude: '',
+                longitude: '',
             });
         }).catch(error => {
             this.redirectIfNotLogin(error);
@@ -979,21 +978,21 @@ export default class CalendarApp extends React.Component {
         })
 
         this.setState({
-            query : query,
-            searchResult : result
+            query: query,
+            searchResult: result
         });
 
     }
 
     resetQuery() {
         this.setState({
-            query : '',
+            query: '',
         });
     }
 
     redirectIfNotLogin(error) {
         if (error.response.status === 401) {
-            window.location.href =  error.response.data.login;
+            window.location.href = error.response.data.login;
         } else {
             this.displayErrorMessage()
         }
