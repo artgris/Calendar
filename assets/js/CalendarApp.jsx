@@ -858,7 +858,7 @@ export default class CalendarApp extends React.Component {
         })
 
         axios({
-            url: this.props.url + '/weather/',
+            url: this.props.url + '/weather',
             method: 'get',
         }).then((result) => {
             $('.weather').remove();
